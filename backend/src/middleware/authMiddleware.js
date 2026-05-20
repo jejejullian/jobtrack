@@ -1,4 +1,7 @@
 import { promisify } from "util";
+import jwt from "jsonwebtoken";
+import AppError from "../utils/AppError.js";
+
 const verifyToken = promisify(jwt.verify);
 
 const authenticateToken = async (req, res, next) => {
@@ -17,3 +20,5 @@ const authenticateToken = async (req, res, next) => {
     next(err);
   }
 };
+
+export default authenticateToken;

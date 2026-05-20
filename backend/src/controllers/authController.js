@@ -1,0 +1,41 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import prisma from "../lib/prisma.js";
+import AppError from "../utils/AppError.js";
+
+const register = async (req, res) => {
+  const { email, username, password } = req.body;
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) {
+    throw new AppError("email sudah pernah digunakan", 400);
+  }
+
+  const hashed = await bcrypt.hash(password, 10);
+
+  await prisma.user.create({ data: { email, username, password: hashed } });
+
+  res.json({ message: "register berhasil" });
+};
+
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    throw new AppError("email atau password salah", 401);
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new AppError("email atau password salah", 401);
+  }
+
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+
+  res.json({ message: "login berhasil", token });
+};
+
+export { register, login };

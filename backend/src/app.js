@@ -5,6 +5,7 @@ import errorHandler from "./middleware/errorHandler.js";
 import "dotenv/config";
 
 import authRoutes from "./routes/authRoutes.js";
+import jobRoutes from "./routes/jobRoutes.js";
 
 const app = express();
 
@@ -19,12 +20,9 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/jobs", jobRoutes);
 
-// error hanlder
+// error handler
 app.use(errorHandler);
 
-// server
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-  console.log(`server anda berjalan di http://localhost:${PORT}`);
-});
+export default app;

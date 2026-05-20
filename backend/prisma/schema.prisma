@@ -4,8 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -29,6 +28,6 @@ model Job{
   notes String?
   appliedAt DateTime @default(now())
   updateAt DateTime @updatedAt
-  user User[]
   userId Int
+  user User @relation(fields: [userId], references: [id])
 }

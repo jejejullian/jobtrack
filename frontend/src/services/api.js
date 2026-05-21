@@ -33,7 +33,7 @@ export const register = async (data) => {
 };
 
 export const getJobs = async (token) => {
-  const response = await fetch(`${BASE_URL}/api/jobs`, {
+  const response = await fetch(`${BASE_URL}/jobs`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ export const getJobs = async (token) => {
 };
 
 export const createJob = async (token, data) => {
-  const response = await fetch(`${BASE_URL}/api/jobs`, {
+  const response = await fetch(`${BASE_URL}/jobs`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -69,7 +69,7 @@ export const createJob = async (token, data) => {
 };
 
 export const updateJob = async (token, id, data) => {
-  const response = await fetch(`${BASE_URL}/api/jobs/${id}`, {
+  const response = await fetch(`${BASE_URL}/jobs/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -88,7 +88,7 @@ export const updateJob = async (token, id, data) => {
 };
 
 export const deleteJob = async (token, id) => {
-  const response = await fetch(`${BASE_URL}/api/jobs/${id}`, {
+  const response = await fetch(`${BASE_URL}/jobs/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,

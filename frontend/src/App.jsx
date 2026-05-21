@@ -1,5 +1,22 @@
-function App() {
-  return <main className="min-h-screen bg-base-100 text-base-content"></main>
+import { Routes, Route } from "react-router-dom";
+
+import { AuthProvider } from "./context/AuthContext.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+
+function DummyLogin() {
+  return <div>Halaman Login - Teks Berjalan</div>;
 }
 
-export default App
+function App() {
+  return (
+    <AuthProvider>
+      <Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<DummyLogin />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
+  );
+}
+
+export default App;

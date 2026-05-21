@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { AuthContext } from "./authContext";
+import { AuthContext} from "./auth.js"; 
 
+// Komponen Provider tetap ada di sini
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("token") || null);
-
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
@@ -11,9 +11,7 @@ export function AuthProvider({ children }) {
 
   const login = (newToken, userData) => {
     localStorage.setItem("token", newToken);
-    if (userData) {
-      localStorage.setItem("user", JSON.stringify(userData));
-    }
+    if (userData) localStorage.setItem("user", JSON.stringify(userData));
     setToken(newToken);
     setUser(userData);
   };
@@ -25,5 +23,9 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  return <AuthContext.Provider value={{ token, user, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ token, user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

@@ -11,21 +11,13 @@ const register = asyncHandler(async (req, res) => {
     throw new AppError("Email, username, and password are required", 400);
   }
 
-  const register = asyncHandler(async (req, res) => {
-    const { email, username, password } = req.body;
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) throw new AppError("Email already in use", 400);
 
-    if (!email || !username || !password) {
-      throw new AppError("Email, username, and password are required", 400);
-    }
+  const hashed = await bcrypt.hash(password, 10);
+  await prisma.user.create({ data: { email, username, password: hashed } });
 
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) throw new AppError("Email already in use", 400);
-
-    const hashed = await bcrypt.hash(password, 10);
-    await prisma.user.create({ data: { email, username, password: hashed } });
-
-    res.json({ message: "Register successful" });
-  });
+  res.json({ message: "Register successful" });
 });
 
 const login = asyncHandler(async (req, res) => {

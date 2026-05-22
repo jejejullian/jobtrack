@@ -37,7 +37,15 @@ const login = asyncHandler(async (req, res) => {
     expiresIn: "1d",
   });
 
-  res.json({ message: "Login successful", token });
+  res.json({
+    message: "Login successful",
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    },
+  });
 });
 
 export { register, login };

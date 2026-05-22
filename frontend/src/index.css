@@ -3,5 +3,49 @@
 @plugin "daisyui" {
   themes:
     light --default,
-    dark;
+    dark --prefersdark;
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+
+  --color-primary: #534ab7;
+  --color-primary-content: #f2f2f2;
+
+  /* Status badge */
+  --status-applied-bg: #eeedfe;
+  --status-applied-text: #3c3489;
+  --status-interview-bg: #e1f5ee;
+  --status-interview-text: #085041;
+  --status-offer-bg: #faeeda;
+  --status-offer-text: #633806;
+  --status-rejected-bg: #fcebeb;
+  --status-rejected-text: #791f1f;
+  --status-saved-bg: #f1efe8;
+  --status-saved-text: #444441;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  prefersdark: true;
+
+  --color-primary: #afa9ec;
+  --color-primary-content: #1e1b4b;
+
+  /* Status badge */
+  --status-applied-bg: #3c3489;
+  --status-applied-text: #cecbf6;
+  --status-interview-bg: #085041;
+  --status-interview-text: #9fe1cb;
+  --status-offer-bg: #633806;
+  --status-offer-text: #fac775;
+  --status-rejected-bg: #791f1f;
+  --status-rejected-text: #f7c1c1;
+  --status-saved-bg: #444441;
+  --status-saved-text: #d3d1c7;
+}
+
+[data-theme="dark"] .login-bg {
+  background: linear-gradient(135deg, #26215c 0%, #1e1b4b 50%, #04342c 100%) !important;
 }

@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 
 import {
   getAllJobs,
@@ -10,7 +10,7 @@ import {
 
 import authenticateToken from "../middleware/authMiddleware.js";
 
-const router = express.Router();
+const router = Router();
 
 router.use(authenticateToken);
 

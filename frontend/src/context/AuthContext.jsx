@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const login = (newToken, userData) => {
+  const login = (newToken, userData = null) => {
     localStorage.setItem("token", newToken);
     if (userData) localStorage.setItem("user", JSON.stringify(userData));
     setToken(newToken);

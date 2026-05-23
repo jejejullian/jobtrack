@@ -5,7 +5,9 @@ const fetchApi = async (url, options = {}) => {
     const response = await fetch(url, options);
     const result = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error(result.error || result.message || "Something went wrong");
+      const error = new Error(result.error || result.message || "Something went wrong");
+      error.field = result.field;
+      throw error;
     }
     return result;
   } catch (err) {

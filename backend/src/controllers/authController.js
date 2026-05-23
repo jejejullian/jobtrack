@@ -5,20 +5,22 @@ import AppError from "../utils/AppError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 const register = asyncHandler(async (req, res) => {
-  const { email, username, password } = req.body;
+    const { email, username, password } = req.body;
 
-  if (!email || !username || !password) {
-    throw new AppError("Email, username, and password are required", 400);
-  }
+    if (!email) throw new AppError("Email is required", 400, "email");
+    if (!username) throw new AppError("Username is required", 400,
+    "username");
+    if (!password) throw new AppError("Password is required", 400,
+    "password");
 
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) throw new AppError("Email already in use", 400);
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) throw new AppError("Email already in use", 400, "email");
 
-  const hashed = await bcrypt.hash(password, 10);
-  await prisma.user.create({ data: { email, username, password: hashed } });
+    const hashed = await bcrypt.hash(password, 10);
+    await prisma.user.create({ data: { email, username, password: hashed } });
 
-  res.json({ message: "Register successful" });
-});
+    res.json({ message: "Register successful" });
+  });
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;

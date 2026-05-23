@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
       ? err.message
       : "terjadi kesalahan pada server";
 
-  res.status(statusCode).json({ error: message });
+  res.status(statusCode).json({ error: message, field: err.field || null });
 };
 
 export default errorHandler;

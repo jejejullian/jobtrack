@@ -30,8 +30,10 @@
   name: "dark";
   prefersdark: true;
 
+  --color-base-100: #151517;
+
   --color-primary: #afa9ec;
-  --color-primary-content: #1e1b4b;
+  --color-primary-content: #1b1b1d;
 
   /* Status badge */
   --status-applied-bg: #3c3489;

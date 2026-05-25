@@ -21,13 +21,15 @@ model User{
 }
 
 model Job{
-  id Int @id @default(autoincrement())
-  company String
-  position String
-  status String @default("Applied")
-  notes String?
-  appliedAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  id           Int      @id @default(autoincrement())
+  company      String
+  position     String
+  location     String?
+  status       String   @default("Applied")
+  referenceLink String?
+  notes        String?
+  appliedAt    DateTime @default(now())
+  updateAt     DateTime @updatedAt
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
 }

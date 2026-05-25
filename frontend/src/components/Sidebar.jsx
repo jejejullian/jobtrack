@@ -12,7 +12,7 @@ export default function Sidebar({ isCollapsed }) {
     <aside
       className={`
         bg-base-100 border-r border-base-200 h-dvh overflow-hidden transition-[width] duration-300 ease-in-out
-        ${isCollapsed ? "w-18" : "w-72 md:w-64"}
+        ${isCollapsed ? "w-18" : "w-64"}
       `}
     >
       <div className="h-full flex flex-col">

@@ -4,6 +4,14 @@ const fetchApi = async (url, options = {}) => {
   try {
     const response = await fetch(url, options);
     const result = await response.json().catch(() => ({}));
+
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      return;
+    }
+
     if (!response.ok) {
       const error = new Error(result.error || result.message || "Something went wrong");
       error.field = result.field;
@@ -12,7 +20,7 @@ const fetchApi = async (url, options = {}) => {
     return result;
   } catch (err) {
     if (err.message === "Failed to fetch") {
-      throw new Error("Unable to connect to server. Please try again later.", {cause: err});
+      throw new Error("Unable to connect to server. Please try again later.", { cause: err });
     }
     throw err;
   }

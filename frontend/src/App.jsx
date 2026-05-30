@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Layout from "./components/Layout.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
+import JobsPage from "./pages/JobsPage.jsx";
 
 function DummyDashboard() {
   return <div className="p-2">Dashboard — coming soon</div>;
@@ -19,9 +20,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
             <Route path="/" element={<DummyDashboard />} />
-            {/* TODO: ganti dengan halaman asli nanti */}
-            {/* <Route path="/jobs" element={<JobsPage />} /> */}
-            {/* <Route path="/profile" element={<ProfilePage />} /> */}
+            <Route path="/jobs" element={<JobsPage />} />
           </Route>
         </Route>
       </Routes>

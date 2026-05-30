@@ -1,19 +1,17 @@
 import { NavLink } from "react-router-dom";
 import { routes } from "../config/routes";
 
-const sidebarMenu = routes.filter(r => r.path !== "/profile");
+const sidebarMenu = routes.filter((r) => r.path !== "/profile");
 
 export default function Sidebar({ isCollapsed }) {
   const navClass = ({ isActive }) =>
     `flex items-center px-4 py-3 rounded-xl text-sm transition-colors
-    ${isActive ? "bg-primary/10 text-primary font-medium" : "text-base-content/60 hover:bg-base-200"}`;
+    ${isActive ? "bg-primary/10 text-primary font-medium" : "text-base-content/60 hover:bg-base-300"}`;
 
   return (
     <aside
-      className={`
-        bg-base-100 border-r border-base-200 h-dvh overflow-hidden transition-[width] duration-300 ease-in-out
-        ${isCollapsed ? "w-18" : "w-64"}
-      `}
+      className={`bg-base-100 border-r border-base-200 h-dvh overflow-hidden transition-[width] duration-300 ease-in-out
+        ${isCollapsed ? "w-18" : "w-64"}`}
     >
       <div className="h-full flex flex-col">
         {/* Brand */}

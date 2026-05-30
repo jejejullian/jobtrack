@@ -61,7 +61,7 @@ export default function Topbar({ onMenuClick, onSidebarToggle }) {
           </div>
 
           <ul tabIndex={0} className="dropdown-content menu bg-base-100 border border-base-200 rounded-xl z-50 w-48 p-0 mt-2 overflow-hidden">
-            {/* Header — nama + email */}
+            {/* Header — name + email */}
             <li className="px-3.5 py-3 border-b border-base-200 pointer-events-none">
               <p className="text-sm font-medium truncate text-base-content">{user?.username}</p>
               <p className="text-[11px] text-base-content/40 truncate mt-0.5">{user?.email}</p>

@@ -2,7 +2,7 @@ import { ArrowUpDown } from "lucide-react";
 
 export default function SortDropdown({ value, onChange }) {
   return (
-    <div className="dropdown dropdown-end lg:dropdown-start">
+    <div className="dropdown dropdown-start lg:dropdown-start">
       <button tabIndex={0} className="btn btn-ghost btn-sm rounded-xl border border-primary text-primary hover:bg-primary/5">
         <ArrowUpDown size={14} />
         {value === "desc" ? "Newest" : "Oldest"}

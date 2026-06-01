@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { register as registerApi } from "../services/api";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -46,7 +46,7 @@ export default function RegisterPage() {
     try {
       await registerApi({ email, username, password });
       toast.success("Account created successfully!");
-      setTimeout(() => navigate("/login"), 1500);
+      navigate("/login");
     } catch (err) {
       const message = err.message || "Failed to register";
       const field = err.field || getErrorField(message);
@@ -70,8 +70,6 @@ export default function RegisterPage() {
         background: "linear-gradient(135deg, #EEEDFE 0%, #e0e7ff 50%, #E1F5EE 100%)",
       }}
     >
-      <Toaster position="top-center" />
-
       <section className="card bg-base-100 w-full max-w-sm border border-primary/20">
         <div className="card-body gap-4">
           <header className="flex flex-col items-center gap-2 mb-2">

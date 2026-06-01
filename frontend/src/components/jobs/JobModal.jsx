@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { useAuth } from "../context/auth";
-import { createJob, updateJob } from "../services/api";
-
-const STATUSES = ["Applied", "Interview", "Offer", "Rejected"];
+import { forwardRef, useState } from "react";
+import { useAuth } from "../../context/auth";
+import { createJob, updateJob } from "../../services/api";
+import { JOB_STATUSES } from "../../constants/job";
+import { toDateInputValue } from "../../utils/date";
 
 const INITIAL_FORM = {
   company: "",
   position: "",
   location: "",
   status: "Applied",
-  appliedAt: new Date().toISOString().split("T")[0],
+  appliedAt: toDateInputValue(),
   notes: "",
   referenceLink: "",
 };
@@ -21,13 +21,13 @@ const getInitialForm = (job) =>
         position: job.position ?? "",
         location: job.location ?? "",
         status: job.status ?? "Applied",
-        appliedAt: job.appliedAt?.split("T")[0] ?? new Date().toISOString().split("T")[0],
+        appliedAt: toDateInputValue(job.appliedAt),
         notes: job.notes ?? "",
         referenceLink: job.referenceLink ?? "",
       }
     : INITIAL_FORM;
 
-export default function JobModal({ id = "job_modal", job = null, onSuccess }) {
+function JobModal({ id = "job_modal", job = null, onSuccess }, ref) {
   const isEdit = !!job;
 
   const [form, setForm] = useState(() => getInitialForm(job));
@@ -42,7 +42,7 @@ export default function JobModal({ id = "job_modal", job = null, onSuccess }) {
 
   const handleClose = () => {
     setError(null);
-    document.getElementById(id)?.close();
+    ref.current?.close();
   };
 
   const handleSubmit = async (e) => {
@@ -67,7 +67,7 @@ export default function JobModal({ id = "job_modal", job = null, onSuccess }) {
   };
 
   return (
-    <dialog id={id} className="modal">
+    <dialog ref={ref} id={id} className="modal">
       <div className="modal-box max-w-md rounded-2xl border border-base-200 shadow-none">
         <div className="mb-5">
           <h3 className="font-semibold text-base">{isEdit ? "Edit Job" : "Add Job"}</h3>
@@ -106,7 +106,7 @@ export default function JobModal({ id = "job_modal", job = null, onSuccess }) {
                   {form.status}
                 </button>
                 <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-xl border border-base-200 shadow-lg z-50 w-full mt-2 p-1 gap-1">
-                  {STATUSES.map((status) => (
+                  {JOB_STATUSES.map((status) => (
                     <li key={status}>
                       <button
                         type="button"
@@ -164,3 +164,5 @@ export default function JobModal({ id = "job_modal", job = null, onSuccess }) {
     </dialog>
   );
 }
+
+export default forwardRef(JobModal);

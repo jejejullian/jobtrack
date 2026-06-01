@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/auth";
 import { login as loginApi } from "../services/api";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,9 +24,11 @@ export default function LoginPage() {
       const data = await loginApi({ email, password });
       login(data.token, data.user);
       toast.success("Login successful!");
-      setTimeout(() => navigate("/"), 1000);
+      navigate("/");
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      const message = err.message || "Invalid email or password";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -39,8 +41,6 @@ export default function LoginPage() {
         background: "linear-gradient(135deg, #EEEDFE 0%, #e0e7ff 50%, #E1F5EE 100%)",
       }}
     >
-      <Toaster position="top-center" />
-
       <section className="card bg-base-100 w-full max-w-sm border border-primary/20">
         <div className="card-body gap-4">
           <header className="flex flex-col items-center gap-2 mb-2">

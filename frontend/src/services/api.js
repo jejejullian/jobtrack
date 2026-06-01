@@ -4,8 +4,9 @@ const fetchApi = async (url, options = {}) => {
   try {
     const response = await fetch(url, options);
     const result = await response.json().catch(() => ({}));
+    const hasAuthHeader = Boolean(options.headers?.Authorization);
 
-    if (response.status === 401) {
+    if (response.status === 401 && hasAuthHeader) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";

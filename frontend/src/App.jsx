@@ -7,10 +7,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import JobsPage from "./pages/JobsPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
-
-function DummyDashboard() {
-  return <div className="p-2">Dashboard — coming soon</div>;
-}
+import DashboardPage from "./pages/DashboardPage.jsx";
 
 function App() {
   return (
@@ -29,7 +26,7 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
-            <Route path="/" element={<DummyDashboard />} />
+            <Route path="/" element={<DashboardPage />} />
             <Route path="/jobs" element={<JobsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>

@@ -9,3 +9,10 @@ export function formatDate(date) {
 export function toDateInputValue(date) {
   return date?.split("T")[0] ?? new Date().toISOString().split("T")[0];
 }
+
+export function getDaysSince(date, now) {
+  return Math.floor(
+    (now - new Date(date).getTime()) /
+      (1000 * 60 * 60 * 24)
+  );
+}

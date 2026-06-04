@@ -71,3 +71,65 @@ export const deleteJob = (token, id) =>
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
+
+export const getMe = (token) =>
+  fetchApi(`${BASE_URL}/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const updateMe = (token, data) =>
+  fetchApi(`${BASE_URL}/users/me`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+export const changePassword = (token, data) =>
+  fetchApi(`${BASE_URL}/users/password`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+export const deleteAccount = (token, data) =>
+  fetchApi(`${BASE_URL}/users/me`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+export const verifyEmail = (token, email = "") => {
+  const params = new URLSearchParams({ token });
+  if (email) params.set("email", email);
+  return fetchApi(`${BASE_URL}/auth/verify?${params.toString()}`);
+};
+
+export const forgotPassword = (data) =>
+  fetchApi(`${BASE_URL}/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+export const resetPassword = (data) =>
+  fetchApi(`${BASE_URL}/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+export const resendVerification = (data) =>
+  fetchApi(`${BASE_URL}/auth/resend-verification`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });

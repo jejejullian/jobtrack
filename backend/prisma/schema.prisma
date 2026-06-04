@@ -18,6 +18,12 @@ model User{
   password String
   createdAt DateTime @default(now())
   jobs Job[]
+
+  isVerified        Boolean   @default(false)
+  verifyToken       String?
+  verifyTokenExpiry DateTime?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
 }
 
 model Job{

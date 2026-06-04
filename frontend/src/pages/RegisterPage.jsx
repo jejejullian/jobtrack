@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { register as registerApi } from "../services/api";
+import { register as registerApi, resendVerification } from "../services/api";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [errors, setErrors] = useState({
     email: "",
     username: "",
@@ -18,8 +20,6 @@ export default function RegisterPage() {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
 
   const getErrorField = (message) => {
     const lowerMessage = message.toLowerCase();
@@ -33,7 +33,13 @@ export default function RegisterPage() {
     const newErrors = { email: "", username: "", password: "", confirmPassword: "" };
     if (!email) newErrors.email = "Email is required";
     if (!username) newErrors.username = "Username is required";
-    if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    } else if (!/[a-zA-Z]/.test(password)) {
+      newErrors.password = "Password must contain at least one letter";
+    } else if (!/[0-9]/.test(password)) {
+      newErrors.password = "Password must contain at least one number";
+    }
     if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
     return Object.values(newErrors).every((e) => e === "");
@@ -45,8 +51,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await registerApi({ email, username, password });
-      toast.success("Account created successfully!");
-      navigate("/login");
+      setEmailSent(true);
     } catch (err) {
       const message = err.message || "Failed to register";
       const field = err.field || getErrorField(message);
@@ -60,6 +65,18 @@ export default function RegisterPage() {
       toast.error(message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setResendLoading(true);
+    try {
+      const data = await resendVerification({ email });
+      toast.success(data.message || "Verification email sent! Check your inbox.");
+    } catch (err) {
+      toast.error(err.message || "Failed to resend. Try again.");
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -171,6 +188,17 @@ export default function RegisterPage() {
               {loading ? <span className="loading loading-spinner loading-sm" /> : "Sign Up"}
             </button>
           </form>
+
+          {emailSent && (
+            <div className="alert alert-success rounded-xl text-sm shadow-none flex-col items-start">
+              <span>
+                Account created! Check your email at <strong>{email}</strong> to verify your account.
+              </span>
+              <button type="button" onClick={handleResendVerification} disabled={resendLoading} className="btn btn-success btn-xs rounded-lg shadow-none">
+                {resendLoading ? "Sending..." : "Resend verification email"}
+              </button>
+            </div>
+          )}
 
           <p className="text-center text-sm text-base-content/50">
             Already have an account?{" "}

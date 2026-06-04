@@ -2,13 +2,15 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/auth";
-import { login as loginApi } from "../services/api";
+import { login as loginApi, resendVerification } from "../services/api";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -18,6 +20,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setNeedsVerification(false);
     setLoading(true);
 
     try {
@@ -28,9 +31,24 @@ export default function LoginPage() {
     } catch (err) {
       const message = err.message || "Invalid email or password";
       setError(message);
+      if (message.toLowerCase().includes("verify")) {
+        setNeedsVerification(true);
+      }
       toast.error(message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setResendLoading(true);
+    try {
+      const data = await resendVerification({ email });
+      toast.success(data.message || "Verification email sent! Check your inbox.");
+    } catch {
+      toast.error("Failed to resend. Try again.");
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -91,6 +109,21 @@ export default function LoginPage() {
             <button type="submit" className="btn btn-primary w-full mt-1" disabled={loading}>
               {loading ? <span className="loading loading-spinner loading-sm" /> : "Sign In"}
             </button>
+
+            <div className="text-right">
+              <Link to="/forgot-password" className="text-xs text-primary hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+
+            {needsVerification && (
+              <div className="bg-warning/10 text-warning text-sm px-3 py-2 rounded-lg flex items-center justify-between gap-2">
+                <span>Email not verified.</span>
+                <button type="button" onClick={handleResendVerification} disabled={resendLoading} className="text-xs font-medium underline">
+                  {resendLoading ? "Sending..." : "Resend link"}
+                </button>
+              </div>
+            )}
           </form>
 
           <p className="text-center text-sm text-base-content/50">

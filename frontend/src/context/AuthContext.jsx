@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { AuthContext} from "./auth.js"; 
 
 export function AuthProvider({ children }) {
@@ -8,22 +8,27 @@ export function AuthProvider({ children }) {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const login = (newToken, userData = null) => {
+  const login = useCallback((newToken, userData = null) => {
     localStorage.setItem("token", newToken);
     if (userData) localStorage.setItem("user", JSON.stringify(userData));
     setToken(newToken);
     setUser(userData);
-  };
+  }, []);
 
-  const logout = () => {
+  const updateUser = useCallback((userData) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
+  }, []);
+
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setToken(null);
     setUser(null);
-  };
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

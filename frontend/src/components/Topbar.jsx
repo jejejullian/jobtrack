@@ -66,14 +66,14 @@ export default function Topbar({ onMenuClick, onSidebarToggle }) {
               {initials}
             </div>
 
-            <ul tabIndex={0} className="dropdown-content menu bg-base-100 border border-base-200 rounded-xl z-50 w-48 p-0 mt-2 overflow-hidden">
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 border border-base-300 shadow rounded-xl z-50 w-48 p-0 mt-2 overflow-hidden">
               <li className="px-3.5 py-3 border-b border-base-200 pointer-events-none">
                 <p className="text-sm font-medium truncate text-base-content">{user?.username}</p>
                 <p className="text-[11px] text-base-content/40 truncate mt-0.5">{user?.email}</p>
               </li>
 
               <li>
-                <button onClick={handleProfile} className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm rounded-none">
+                <button onClick={handleProfile} className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm rounded-none hover:bg-base-300 active:bg-primary/10 active:text-primary">
                   <User size={15} aria-hidden="true" />
                   Profile
                 </button>
@@ -82,7 +82,7 @@ export default function Topbar({ onMenuClick, onSidebarToggle }) {
               <div className="h-px bg-base-200 mx-0" />
 
               <li>
-                <button onClick={openLogoutModal} className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-error/80 hover:bg-error/10 rounded-none">
+                <button onClick={openLogoutModal} className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-error/80 hover:bg-error/10 active:bg-error/20 rounded-none">
                   <LogOut size={15} aria-hidden="true" />
                   Logout
                 </button>
@@ -92,15 +92,7 @@ export default function Topbar({ onMenuClick, onSidebarToggle }) {
         </div>
       </header>
 
-      <ConfirmModal
-        ref={logoutModalRef}
-        id="logout_modal"
-        title="Logout from your account?"
-        description="You will need to sign in again to access your job tracker."
-        confirmLabel="Logout"
-        confirmClass="btn-error"
-        onConfirm={handleLogout}
-      />
+      <ConfirmModal ref={logoutModalRef} id="logout_modal" title="Logout from your account?" description="You will need to sign in again to access your job tracker." confirmLabel="Logout" confirmClass="btn-error" onConfirm={handleLogout} />
     </>
   );
 }

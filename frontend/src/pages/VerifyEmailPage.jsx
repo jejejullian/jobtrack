@@ -84,11 +84,20 @@ export default function VerifyEmailPage() {
               <h1 className="text-lg font-semibold">Verification Failed</h1>
               <p className="text-sm text-base-content/60">{message}</p>
 
-              {/* Tambah ini */}
               <div className="w-full space-y-2">
                 <p className="text-xs text-base-content/50">Need a new verification link?</p>
-                <input type="email" placeholder="Enter your email" value={resendEmail} onChange={(e) => setResendEmail(e.target.value)} className="input input-bordered input-sm w-full rounded-xl focus:outline-none focus:border-primary" />
-                <button onClick={handleResend} disabled={resendLoading || !resendEmail} className="btn btn-primary btn-sm rounded-xl shadow-none w-full">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={resendEmail}
+                  onChange={(e) => setResendEmail(e.target.value)}
+                  className="w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 text-sm outline-none transition-colors focus:border-primary"
+                />
+                <button
+                  onClick={handleResend}
+                  disabled={resendLoading || !resendEmail}
+                  className="btn btn-primary btn-sm rounded-xl shadow-none w-full"
+                >
                   {resendLoading ? <span className="loading loading-spinner loading-xs" /> : "Resend Verification Email"}
                 </button>
               </div>

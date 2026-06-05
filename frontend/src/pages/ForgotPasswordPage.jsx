@@ -42,8 +42,7 @@ export default function ForgotPasswordPage() {
             <div className="space-y-4">
               <div className="alert alert-success rounded-xl text-sm shadow-none">
                 <span>
-                  If <strong>{email}</strong> is registered, a reset link has been sent.
-                  Check your inbox.
+                  If <strong>{email}</strong> is registered, a reset link has been sent. Check your inbox.
                 </span>
               </div>
               <Link to="/login" className="btn btn-ghost btn-sm rounded-xl w-full">
@@ -52,19 +51,19 @@ export default function ForgotPasswordPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="form-control w-full">
-                <label htmlFor="forgot-email" className="label pb-1">
-                  <span className="label-text text-xs font-medium">Email</span>
+              <div className="flex flex-col gap-1">
+                <label htmlFor="forgot-email" className="text-xs font-medium">
+                  Email
                 </label>
                 <input
                   id="forgot-email"
                   type="email"
-                  className="input input-primary w-full focus:border-primary"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoFocus
+                  className="w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 text-sm outline-none transition-colors focus:border-primary"
                 />
               </div>
 

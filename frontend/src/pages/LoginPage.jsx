@@ -66,34 +66,43 @@ export default function LoginPage() {
             <h1 className="text-2xl font-bold text-primary">Job Tracker</h1>
             <p className="text-sm text-base-content/50">Sign in to your account</p>
           </header>
+
           {error && (
             <p role="alert" className="bg-error/10 text-error text-sm px-3 py-2 rounded-lg">
               {error}
             </p>
           )}
+
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="form-control w-full">
-              {/* Email  */}
-              <label htmlFor="login-email" className="label pb-1">
-                <span className="label-text text-xs font-medium">Email</span>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="login-email" className="text-xs font-medium">
+                Email
               </label>
-              <input id="login-email" type="email" className="input input-primary w-full focus:border-primary" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
+              <input
+                id="login-email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoFocus
+                className="w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 text-sm outline-none transition-colors focus:border-primary"
+              />
             </div>
 
-            <div className="form-control w-full">
-              {/* Password  */}
-              <label htmlFor="login-password" className="label pb-1">
-                <span className="label-text text-xs font-medium">Password</span>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="login-password" className="text-xs font-medium">
+                Password
               </label>
               <div className="relative">
                 <input
                   id="login-password"
                   type={showPassword ? "text" : "password"}
-                  className="input input-bordered w-full pr-10 focus:input-primary"
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  className="w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 pr-10 text-sm outline-none transition-colors focus:border-primary"
                 />
                 <button
                   type="button"

@@ -7,8 +7,12 @@ function applyTheme(dark) {
 
 export default function useTheme() {
   const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem("theme") ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    return saved === "dark";
+    const saved = localStorage.getItem("theme");
+    const dark = saved
+      ? saved === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(dark);
+    return dark;
   });
 
   const toggleTheme = () => {

@@ -27,7 +27,6 @@ export default function SearchBar({ value, onChange }) {
           pr-4
           text-sm
           outline-none
-          transition-colors
           placeholder:text-base-content/50
           focus:border-primary
           focus:ring-0

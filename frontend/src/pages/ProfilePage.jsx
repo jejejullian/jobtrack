@@ -11,6 +11,9 @@ const emptyPasswordForm = {
   confirmPassword: "",
 };
 
+const inputClass = "w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 text-sm outline-none focus:border-primary";
+const inputReadonlyClass = "w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 text-sm outline-none cursor-default opacity-60";
+
 export default function ProfilePage() {
   const { token, user, updateUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -143,6 +146,7 @@ export default function ProfilePage() {
           <p className="text-sm text-base-content/60 mt-1">Manage your account details and security.</p>
         </header>
 
+        {/* Profile Info */}
         <section className="bg-base-100 border border-base-200 rounded-xl p-5">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -155,18 +159,28 @@ export default function ProfilePage() {
           </div>
 
           <form onSubmit={handleProfileSubmit} className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="form-control">
-              <label htmlFor="profile-username" className="label pb-1">
-                <span className="label-text text-xs font-medium">Username</span>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="profile-username" className="text-xs font-medium">
+                Username
               </label>
-              <input id="profile-username" className="input input-bordered w-full" value={username} onChange={(e) => setUsername(e.target.value)} />
+              <input
+                id="profile-username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className={inputClass}
+              />
             </div>
 
-            <div className="form-control">
-              <label htmlFor="profile-email" className="label pb-1">
-                <span className="label-text text-xs font-medium">Email</span>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="profile-email" className="text-xs font-medium">
+                Email
               </label>
-              <input id="profile-email" className="input input-bordered w-full" value={profile?.email || ""} readOnly />
+              <input
+                id="profile-email"
+                value={profile?.email || ""}
+                readOnly
+                className={inputReadonlyClass}
+              />
             </div>
 
             <div className="md:col-span-2 flex flex-wrap items-center gap-2 text-sm">
@@ -187,6 +201,7 @@ export default function ProfilePage() {
           </form>
         </section>
 
+        {/* Security */}
         <section className="bg-base-100 border border-base-200 rounded-xl p-5">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-lg bg-info/10 text-info flex items-center justify-center shrink-0">
@@ -199,30 +214,41 @@ export default function ProfilePage() {
           </div>
 
           <form onSubmit={handlePasswordSubmit} className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input
-              type="password"
-              className="input input-bordered w-full"
-              placeholder="Current password"
-              value={passwordForm.currentPassword}
-              onChange={(e) => setPasswordForm((prev) => ({ ...prev, currentPassword: e.target.value }))}
-              required
-            />
-            <input
-              type="password"
-              className="input input-bordered w-full"
-              placeholder="New password"
-              value={passwordForm.newPassword}
-              onChange={(e) => setPasswordForm((prev) => ({ ...prev, newPassword: e.target.value }))}
-              required
-            />
-            <input
-              type="password"
-              className="input input-bordered w-full"
-              placeholder="Confirm new password"
-              value={passwordForm.confirmPassword}
-              onChange={(e) => setPasswordForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-              required
-            />
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium">Current Password</label>
+              <input
+                type="password"
+                placeholder="Current password"
+                value={passwordForm.currentPassword}
+                onChange={(e) => setPasswordForm((prev) => ({ ...prev, currentPassword: e.target.value }))}
+                required
+                className={inputClass}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium">New Password</label>
+              <input
+                type="password"
+                placeholder="New password"
+                value={passwordForm.newPassword}
+                onChange={(e) => setPasswordForm((prev) => ({ ...prev, newPassword: e.target.value }))}
+                required
+                className={inputClass}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium">Confirm New Password</label>
+              <input
+                type="password"
+                placeholder="Confirm new password"
+                value={passwordForm.confirmPassword}
+                onChange={(e) => setPasswordForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                required
+                className={inputClass}
+              />
+            </div>
 
             {passwordError && <p className="md:col-span-3 text-sm text-error">{passwordError}</p>}
 
@@ -234,6 +260,7 @@ export default function ProfilePage() {
           </form>
         </section>
 
+        {/* Danger Zone */}
         <section className="bg-base-100 border border-error/20 rounded-xl p-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3">
@@ -252,6 +279,7 @@ export default function ProfilePage() {
         </section>
       </div>
 
+      {/* Delete Modal */}
       <dialog ref={deleteModalRef} className="modal">
         <div className="modal-box mx-4 w-[calc(100%-2rem)] max-w-sm rounded-2xl shadow-none border border-base-200">
           <h3 className="font-medium text-base text-error">Delete account?</h3>
@@ -260,16 +288,21 @@ export default function ProfilePage() {
           <form onSubmit={handleDeleteAccount} className="mt-5 space-y-3">
             <input
               type="password"
-              className="input input-bordered w-full"
               placeholder="Enter your password"
               value={deletePassword}
               onChange={(e) => setDeletePassword(e.target.value)}
               required
+              className={inputClass}
             />
             {deleteError && <p className="text-sm text-error">{deleteError}</p>}
 
             <div className="modal-action mt-5 flex-col-reverse gap-2 sm:flex-row">
-              <button type="button" className="btn btn-ghost btn-sm rounded-xl" onClick={() => deleteModalRef.current?.close()} disabled={deleting}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm rounded-xl"
+                onClick={() => deleteModalRef.current?.close()}
+                disabled={deleting}
+              >
                 Cancel
               </button>
               <button type="submit" className="btn btn-error btn-sm rounded-xl shadow-none text-base-100" disabled={deleting}>

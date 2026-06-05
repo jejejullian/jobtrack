@@ -20,7 +20,7 @@ export default function Layout() {
   }, []);
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-primary-content">
+    <div className="flex h-dvh overflow-hidden bg-base-200">
       {/* Overlay Mobile */}
       {!isDesktop && mobileOpen && (
         <div

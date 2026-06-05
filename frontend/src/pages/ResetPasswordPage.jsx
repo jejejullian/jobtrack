@@ -46,10 +46,14 @@ export default function ResetPasswordPage() {
     }
   };
 
+  const inputClass = "w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 pr-10 text-sm outline-none transition-colors focus:border-primary";
+
   if (!token) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-4"
-        style={{ background: "linear-gradient(135deg, #EEEDFE 0%, #e0e7ff 50%, #E1F5EE 100%)" }}>
+      <main
+        className="min-h-screen flex items-center justify-center px-4"
+        style={{ background: "linear-gradient(135deg, #EEEDFE 0%, #e0e7ff 50%, #E1F5EE 100%)" }}
+      >
         <section className="card bg-base-100 w-full max-w-sm border border-primary/20">
           <div className="card-body gap-4 text-center">
             <p className="text-error text-sm">Invalid or missing reset token.</p>
@@ -84,21 +88,21 @@ export default function ResetPasswordPage() {
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Password Baru */}
-            <div className="form-control w-full">
-              <label htmlFor="reset-password" className="label pb-1">
-                <span className="label-text text-xs font-medium">New Password</span>
+            {/* New Password */}
+            <div className="flex flex-col gap-1">
+              <label htmlFor="reset-password" className="text-xs font-medium">
+                New Password
               </label>
               <div className="relative">
                 <input
                   id="reset-password"
                   type={showPassword ? "text" : "password"}
-                  className="input input-primary w-full focus:border-primary"
                   placeholder="Enter new password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoFocus
+                  className={inputClass}
                 />
                 <button
                   type="button"
@@ -111,20 +115,20 @@ export default function ResetPasswordPage() {
               </div>
             </div>
 
-            {/* Konfirmasi Password */}
-            <div className="form-control w-full">
-              <label htmlFor="reset-confirm" className="label pb-1">
-                <span className="label-text text-xs font-medium">Confirm Password</span>
+            {/* Confirm Password */}
+            <div className="flex flex-col gap-1">
+              <label htmlFor="reset-confirm" className="text-xs font-medium">
+                Confirm Password
               </label>
               <div className="relative">
                 <input
                   id="reset-confirm"
                   type={showConfirm ? "text" : "password"}
-                  className="input input-primary w-full focus:border-primary"
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  className={inputClass}
                 />
                 <button
                   type="button"

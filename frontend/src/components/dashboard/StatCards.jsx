@@ -54,7 +54,7 @@ export default function StatCards({ stats }) {
       {/* Tablet & Desktop */}
       <div className="hidden sm:grid grid-cols-3 lg:grid-cols-5 gap-3">
         {STAT_CONFIG.map(({ key, label, colorClass, icon: Icon }) => (
-          <div key={key} className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-all">
+          <div key={key} className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md ">
             <div className="card-body p-4">
               <div className="flex items-start justify-between">
                 <div>

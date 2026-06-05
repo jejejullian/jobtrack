@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { deleteJob, getJobs, updateJob } from "../services/api";
 
+// month aliases for search (en + id)
 const MONTH_SEARCH_TERMS = [
   ["january", "jan", "januari"],
   ["february", "feb", "februari"],
@@ -16,6 +17,7 @@ const MONTH_SEARCH_TERMS = [
   ["december", "dec", "desember", "des"],
 ];
 
+// job list state, filters, CRUD
 export function useJobs(token) {
   const [jobs, setJobs] = useState([]);
   const [search, setSearch] = useState("");

@@ -1,3 +1,4 @@
+// job status options & badge classes
 export const JOB_STATUSES = ["Applied", "Interview", "Offer", "Rejected"];
 
 export const JOB_FILTER_STATUSES = ["All", ...JOB_STATUSES];

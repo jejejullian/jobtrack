@@ -4,6 +4,7 @@ import { createJob, updateJob } from "../../services/api";
 import { JOB_STATUSES } from "../../constants/job";
 import { toDateInputValue } from "../../utils/date";
 
+// default form values
 const INITIAL_FORM = {
   company: "",
   position: "",
@@ -14,6 +15,7 @@ const INITIAL_FORM = {
   referenceLink: "",
 };
 
+// populate form for edit mode
 const getInitialForm = (job) =>
   job
     ? {

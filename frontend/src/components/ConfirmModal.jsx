@@ -8,6 +8,7 @@ function ConfirmModal({
   confirmClass = "btn-error",
   onConfirm,
 }, ref) {
+  // reusable confirm dialog
   return (
     <dialog ref={ref} id={id} className="modal">
       <div className="modal-box mx-4 w-[calc(100%-2rem)] max-w-sm rounded-2xl shadow-none border border-base-200">
@@ -17,12 +18,10 @@ function ConfirmModal({
         )}
 
         <div className="modal-action mt-6 flex-col-reverse gap-2 sm:flex-row">
-          {/* Close tanpa action */}  
           <form method="dialog">
             <button className="btn btn-ghost btn-sm w-full rounded-xl sm:w-auto">Cancel</button>
           </form>
 
-          {/* Confirm action */}
           <form method="dialog">
             <button
               className={`btn btn-sm w-full rounded-xl shadow-none text-base-100 sm:w-auto ${confirmClass}`}
@@ -34,7 +33,6 @@ function ConfirmModal({
         </div>
       </div>
 
-      {/* Click backdrop untuk close */}
       <form method="dialog" className="modal-backdrop">
         <button>close</button>
       </form>

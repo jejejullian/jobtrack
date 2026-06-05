@@ -4,6 +4,7 @@ import StatusBadge from "../jobs/StatusBadge";
 import { formatDate } from "../../utils/date"; 
 import EmptyState from "../common/EmptyState"; 
 
+// 5 most recent applications
 export default function RecentJobs({ jobs }) {
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm">

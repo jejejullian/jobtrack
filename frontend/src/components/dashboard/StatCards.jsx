@@ -1,5 +1,6 @@
 import { Briefcase, Send, MessageSquare, BadgeCheck, XCircle } from "lucide-react";
 
+// stat card config
 const STAT_CONFIG = [
   {
     key: "total",

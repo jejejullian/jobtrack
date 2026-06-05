@@ -12,6 +12,7 @@ import EmptyState from "../components/common/EmptyState";
 import ErrorState from "../components/common/ErrorState";
 
 export default function JobsPage() {
+  // modal state
   const [jobToDelete, setJobToDelete] = useState(null);
   const [jobToEdit, setJobToEdit] = useState(null);
   const [modalKey, setModalKey] = useState(0);
@@ -21,6 +22,7 @@ export default function JobsPage() {
   const { token } = useAuth();
   const { jobs, displayedJobs, search, setSearch, filter, setFilter, sortOrder, setSortOrder, loading, error, refetchJobs, deleteJobById, updateJobStatus, saveJobResult } = useJobs(token);
 
+  // handlers
   const openDeleteModal = (id) => {
     setJobToDelete(id);
     deleteModalRef.current?.showModal();

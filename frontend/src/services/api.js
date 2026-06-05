@@ -1,5 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+// base fetch wrapper
 const fetchApi = async (url, options = {}) => {
   try {
     const response = await fetch(url, options);
@@ -27,6 +28,7 @@ const fetchApi = async (url, options = {}) => {
   }
 };
 
+// auth
 export const login = (data) =>
   fetchApi(`${BASE_URL}/auth/login`, {
     method: "POST",
@@ -41,6 +43,7 @@ export const register = (data) =>
     body: JSON.stringify(data),
   });
 
+// jobs
 export const getJobs = (token) =>
   fetchApi(`${BASE_URL}/jobs`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -72,6 +75,7 @@ export const deleteJob = (token, id) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+// users
 export const getMe = (token) =>
   fetchApi(`${BASE_URL}/users/me`, {
     headers: { Authorization: `Bearer ${token}` },

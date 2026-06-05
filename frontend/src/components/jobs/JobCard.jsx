@@ -2,6 +2,7 @@ import { Calendar, MapPin } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import { formatDate } from "../../utils/date";
 
+// mobile job card
 export default function JobCard({ job, onDelete, onStatusChange, onEdit }) {
   return (
     <div className="card card-bordered bg-base-100 shadow-sm">

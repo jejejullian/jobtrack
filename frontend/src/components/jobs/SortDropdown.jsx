@@ -1,5 +1,6 @@
 import { ArrowUpDown } from "lucide-react";
 
+// sort by date asc/desc
 export default function SortDropdown({ value, onChange }) {
   return (
     <div className="dropdown dropdown-start lg:dropdown-start">

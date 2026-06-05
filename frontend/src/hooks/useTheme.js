@@ -5,6 +5,7 @@ function applyTheme(dark) {
   localStorage.setItem("theme", dark ? "dark" : "light");
 }
 
+// persist theme to localStorage
 export default function useTheme() {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem("theme");

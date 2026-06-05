@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { JOB_STATUS_BADGE, JOB_STATUSES } from "../../constants/job";
 
+// clickable if onChange provided
 export default function StatusBadge({ status, onChange, className = "" }) {
   if (!onChange) {
     return <span className={`badge badge-sm ${JOB_STATUS_BADGE[status] ?? "badge-ghost"} ${className}`}>{status}</span>;

@@ -1,6 +1,7 @@
 import { Funnel } from "lucide-react";
 import { JOB_FILTER_STATUSES } from "../../constants/job";
 
+// filter by status
 export default function StatusFilter({ value, onChange }) {
   return (
     <div className="dropdown dropdown-start lg:dropdown-start ">

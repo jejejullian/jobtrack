@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import AppError from "../utils/AppError.js";
 
+// resend client
 const resend = new Resend(process.env.RESEND_API_KEY);
 let warnedAboutDefaultSender = false;
 
@@ -21,6 +22,7 @@ const ensureEmailConfig = () => {
   }
 };
 
+// send verification email
 export const sendVerificationEmail = async (email, token) => {
   ensureEmailConfig();
 
@@ -55,6 +57,7 @@ export const sendVerificationEmail = async (email, token) => {
   }
 };
 
+// send reset password email
 export const sendResetPasswordEmail = async (email, token) => {
   ensureEmailConfig();
 

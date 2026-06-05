@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Clock } from "lucide-react";
 import EmptyState from "../common/EmptyState";
 
+// applied jobs not updated in 14+ days
 export default function FollowUpJobs({ jobs }) {
   return (
     <div className="card bg-base-100 border border-base-200 shadow-sm">

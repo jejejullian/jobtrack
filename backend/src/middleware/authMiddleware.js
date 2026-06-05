@@ -4,6 +4,7 @@ import AppError from "../utils/AppError.js";
 
 const verifyToken = promisify(jwt.verify);
 
+// verify jwt from header
 const authenticateToken = async (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"];

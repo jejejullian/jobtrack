@@ -1,8 +1,10 @@
 import { NavLink } from "react-router-dom";
 import { routes } from "../config/routes";
 
+// exclude profile from sidebar
 const sidebarMenu = routes.filter((r) => r.path !== "/profile");
 
+// collapsible sidebar
 export default function Sidebar({ isCollapsed }) {
   const navClass = ({ isActive }) =>
     `flex items-center px-4 py-3 rounded-xl text-sm transition-colors

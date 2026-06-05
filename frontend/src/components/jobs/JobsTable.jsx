@@ -2,6 +2,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { formatDate } from "../../utils/date";
 import StatusBadge from "./StatusBadge";
 
+// desktop job table
 export default function JobsTable({ jobs, onStatusChange, onEdit, onDelete }) {
   return (
     <div className="hidden md:block overflow-x-auto rounded-xl border border-base-200 bg-base-100">

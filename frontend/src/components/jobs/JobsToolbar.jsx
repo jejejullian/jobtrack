@@ -3,6 +3,7 @@ import Searchbar from "../Searchbar";
 import StatusFilter from "./StatusFilter";
 import SortDropdown from "./SortDropdown";
 
+// search, filter, sort, add button
 export default function JobsToolbar({ search, onSearchChange, filter, onFilterChange, sortOrder, onSortChange, displayedCount, totalCount, onAdd }) {
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

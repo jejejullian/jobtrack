@@ -7,6 +7,7 @@ import { routes } from "../config/routes";
 import ConfirmModal from "./ConfirmModal";
 import toast from "react-hot-toast";
 
+// map path → page title
 const pageTitles = Object.fromEntries(routes.map((r) => [r.path, r.name]));
 
 export default function Topbar({ onMenuClick, onSidebarToggle }) {
@@ -19,6 +20,7 @@ export default function Topbar({ onMenuClick, onSidebarToggle }) {
   const initials = user?.username?.slice(0, 2).toUpperCase() ?? "JT";
   const pageTitle = pageTitles[location.pathname] ?? "Job Tracker";
 
+  // handlers
   const openLogoutModal = () => {
     document.activeElement?.blur();
     logoutModalRef.current?.showModal();

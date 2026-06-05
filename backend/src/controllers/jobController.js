@@ -2,6 +2,7 @@ import prisma from "../lib/prisma.js";
 import AppError from "../utils/AppError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
+// helper
 const parseAppliedAt = (appliedAt) => {
   if (appliedAt === undefined) return undefined;
 
@@ -13,6 +14,7 @@ const parseAppliedAt = (appliedAt) => {
   return date;
 };
 
+// get all
 const getAllJobs = asyncHandler(async (req, res) => {
   const jobs = await prisma.job.findMany({
     where: { userId: req.user.id },
@@ -21,6 +23,7 @@ const getAllJobs = asyncHandler(async (req, res) => {
   res.json(jobs);
 });
 
+// get by id
 const getJobById = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id);
   if (Number.isNaN(id)) throw new AppError("Invalid job id", 400);
@@ -33,6 +36,7 @@ const getJobById = asyncHandler(async (req, res) => {
   res.json(job);
 });
 
+// create
 const createJob = asyncHandler(async (req, res) => {
   const { company, position, location, status, referenceLink, notes, appliedAt } = req.body;
   const userId = req.user.id;
@@ -44,6 +48,7 @@ const createJob = asyncHandler(async (req, res) => {
   res.status(201).json(job);
 });
 
+// update
 const updateJob = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id);
   if (Number.isNaN(id)) throw new AppError("Invalid job id", 400);
@@ -62,6 +67,7 @@ const updateJob = asyncHandler(async (req, res) => {
   res.json(job);
 });
 
+// delete
 const deleteJob = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id);
   if (Number.isNaN(id)) throw new AppError("Invalid job id", 400);

@@ -1,320 +1,212 @@
-import { useEffect, useRef, useState } from "react";
-import { CheckCircle, ShieldCheck, Trash2, UserRound } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import { register as registerApi, resendVerification } from "../services/api";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/auth";
-import { changePassword, deleteAccount, getMe, updateMe } from "../services/api";
 
-const emptyPasswordForm = {
-  currentPassword: "",
-  newPassword: "",
-  confirmPassword: "",
-};
+export default function RegisterPage() {
+  const [email, setEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
 
-const inputClass = "w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 text-sm outline-none transition-colors focus:border-primary";
-const inputReadonlyClass = "w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 text-sm outline-none cursor-default opacity-60";
+  // helpers
+  const getErrorField = (message) => {
+    const lowerMessage = message.toLowerCase();
+    if (lowerMessage.includes("email")) return "email";
+    if (lowerMessage.includes("username")) return "username";
+    if (lowerMessage.includes("password")) return "password";
+    return "password";
+  };
 
-export default function ProfilePage() {
-  const { token, user, updateUser, logout } = useAuth();
-  const navigate = useNavigate();
-  const deleteModalRef = useRef(null);
+  // client-side validation
+  const validate = () => {
+    const newErrors = { email: "", username: "", password: "", confirmPassword: "" };
+    if (!email) newErrors.email = "Email is required";
+    if (!username) newErrors.username = "Username is required";
+    if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    } else if (!/[a-zA-Z]/.test(password)) {
+      newErrors.password = "Password must contain at least one letter";
+    } else if (!/[0-9]/.test(password)) {
+      newErrors.password = "Password must contain at least one number";
+    }
+    if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    setErrors(newErrors);
+    return Object.values(newErrors).every((e) => e === "");
+  };
 
-  const [profile, setProfile] = useState(user);
-  const [username, setUsername] = useState(user?.username || "");
-  const [passwordForm, setPasswordForm] = useState(emptyPasswordForm);
-  const [deletePassword, setDeletePassword] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [savingProfile, setSavingProfile] = useState(false);
-  const [savingPassword, setSavingPassword] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [profileError, setProfileError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [deleteError, setDeleteError] = useState("");
-
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        setLoading(true);
-        const data = await getMe(token);
-        setProfile(data.user);
-        setUsername(data.user.username);
-        updateUser({
-          id: data.user.id,
-          email: data.user.email,
-          username: data.user.username,
-        });
-      } catch (err) {
-        toast.error(err.message || "Failed to load profile.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProfile();
-  }, [token, updateUser]);
-
-  const createdAt = profile?.createdAt
-    ? new Intl.DateTimeFormat("en", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }).format(new Date(profile.createdAt))
-    : "-";
-
-  const handleProfileSubmit = async (e) => {
+  // register
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setProfileError("");
-    setSavingProfile(true);
-
+    if (!validate()) return;
+    setLoading(true);
     try {
-      const data = await updateMe(token, { username });
-      setProfile(data.user);
-      updateUser({
-        id: data.user.id,
-        email: data.user.email,
-        username: data.user.username,
+      await registerApi({ email, username, password });
+      setEmailSent(true);
+    } catch (err) {
+      const message = err.message || "Failed to register";
+      const field = err.field || getErrorField(message);
+      setErrors({
+        email: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+        [field]: message,
       });
-      toast.success(data.message || "Profile updated successfully.");
-    } catch (err) {
-      setProfileError(err.message || "Failed to update profile.");
+      toast.error(message);
     } finally {
-      setSavingProfile(false);
+      setLoading(false);
     }
   };
 
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-    setPasswordError("");
-
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPasswordError("New passwords do not match.");
-      return;
-    }
-
-    setSavingPassword(true);
+  // resend verification
+  const handleResendVerification = async () => {
+    setResendLoading(true);
     try {
-      const data = await changePassword(token, {
-        currentPassword: passwordForm.currentPassword,
-        newPassword: passwordForm.newPassword,
-      });
-      setPasswordForm(emptyPasswordForm);
-      toast.success(data.message || "Password updated successfully.");
+      const data = await resendVerification({ email });
+      toast.success(data.message || "Verification email sent! Check your inbox.");
     } catch (err) {
-      setPasswordError(err.message || "Failed to update password.");
+      toast.error(err.message || "Failed to resend. Try again.");
     } finally {
-      setSavingPassword(false);
+      setResendLoading(false);
     }
   };
 
-  const openDeleteModal = () => {
-    setDeletePassword("");
-    setDeleteError("");
-    document.activeElement?.blur();
-    deleteModalRef.current?.showModal();
-  };
-
-  const handleDeleteAccount = async (e) => {
-    e.preventDefault();
-    setDeleteError("");
-    setDeleting(true);
-
-    try {
-      await deleteAccount(token, { password: deletePassword });
-      toast.success("Account deleted successfully.");
-      logout();
-      navigate("/register", { replace: true });
-    } catch (err) {
-      setDeleteError(err.message || "Failed to delete account.");
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <span className="loading loading-spinner loading-md" />
-      </div>
-    );
-  }
+  const inputClass = "w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 text-sm outline-none  focus:border-primary";
+  const inputClassWithIcon = "w-full h-10 rounded-xl border border-base-300 bg-base-100 px-3 pr-10 text-sm outline-none  focus:border-primary";
 
   return (
-    <>
-      <div className="mx-auto max-w-4xl space-y-5">
-        <header>
-          <h2 className="text-2xl font-semibold">Profile</h2>
-          <p className="text-sm text-base-content/60 mt-1">Manage your account details and security.</p>
-        </header>
+    <main
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{
+        background: "linear-gradient(135deg, #EEEDFE 0%, #e0e7ff 50%, #E1F5EE 100%)",
+      }}
+    >
+      <section className="card bg-base-100 w-full max-w-sm border border-primary/20">
+        <div className="card-body gap-4">
+          <header className="flex flex-col items-center gap-2 mb-2">
+            <img src="/logo.png" alt="Job Tracker logo" className="h-12 w-auto" />
+            <h1 className="text-2xl font-bold text-primary">Job Tracker</h1>
+            <p className="text-sm text-base-content/50">Create your account</p>
+          </header>
 
-        {/* Profile Info */}
-        <section className="bg-base-100 border border-base-200 rounded-xl p-5">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <UserRound size={20} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="font-medium">Profile Info</h3>
-              <p className="text-sm text-base-content/50">Update your username and review account status.</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleProfileSubmit} className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {/* Email */}
             <div className="flex flex-col gap-1">
-              <label htmlFor="profile-username" className="text-xs font-medium">
-                Username
-              </label>
-              <input
-                id="profile-username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className={inputClass}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label htmlFor="profile-email" className="text-xs font-medium">
+              <label htmlFor="register-email" className="text-xs font-medium">
                 Email
               </label>
-              <input
-                id="profile-email"
-                value={profile?.email || ""}
-                readOnly
-                className={inputReadonlyClass}
-              />
+              <input id="register-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus className={inputClass} />
+              {errors.email && (
+                <p role="alert" className="text-error text-xs">
+                  {errors.email}
+                </p>
+              )}
             </div>
 
-            <div className="md:col-span-2 flex flex-wrap items-center gap-2 text-sm">
-              <span className="badge badge-success gap-1 rounded-lg">
-                <CheckCircle size={14} />
-                {profile?.isVerified ? "Email verified" : "Email not verified"}
-              </span>
-              <span className="badge badge-ghost rounded-lg">Joined {createdAt}</span>
-            </div>
-
-            {profileError && <p className="md:col-span-2 text-sm text-error">{profileError}</p>}
-
-            <div className="md:col-span-2">
-              <button type="submit" className="btn btn-primary btn-sm rounded-xl shadow-none" disabled={savingProfile}>
-                {savingProfile ? <span className="loading loading-spinner loading-xs" /> : "Save profile"}
-              </button>
-            </div>
-          </form>
-        </section>
-
-        {/* Security */}
-        <section className="bg-base-100 border border-base-200 rounded-xl p-5">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-info/10 text-info flex items-center justify-center shrink-0">
-              <ShieldCheck size={20} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="font-medium">Security</h3>
-              <p className="text-sm text-base-content/50">Change your password using your current password.</p>
-            </div>
-          </div>
-
-          <form onSubmit={handlePasswordSubmit} className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Username */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium">Current Password</label>
-              <input
-                type="password"
-                placeholder="Current password"
-                value={passwordForm.currentPassword}
-                onChange={(e) => setPasswordForm((prev) => ({ ...prev, currentPassword: e.target.value }))}
-                required
-                className={inputClass}
-              />
+              <label htmlFor="register-username" className="text-xs font-medium">
+                Username
+              </label>
+              <input id="register-username" type="text" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} required className={inputClass} />
+              {errors.username && (
+                <p role="alert" className="text-error text-xs">
+                  {errors.username}
+                </p>
+              )}
             </div>
 
+            {/* Password */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium">New Password</label>
-              <input
-                type="password"
-                placeholder="New password"
-                value={passwordForm.newPassword}
-                onChange={(e) => setPasswordForm((prev) => ({ ...prev, newPassword: e.target.value }))}
-                required
-                className={inputClass}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium">Confirm New Password</label>
-              <input
-                type="password"
-                placeholder="Confirm new password"
-                value={passwordForm.confirmPassword}
-                onChange={(e) => setPasswordForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-                required
-                className={inputClass}
-              />
-            </div>
-
-            {passwordError && <p className="md:col-span-3 text-sm text-error">{passwordError}</p>}
-
-            <div className="md:col-span-3">
-              <button type="submit" className="btn btn-primary btn-sm rounded-xl shadow-none" disabled={savingPassword}>
-                {savingPassword ? <span className="loading loading-spinner loading-xs" /> : "Update password"}
-              </button>
-            </div>
-          </form>
-        </section>
-
-        {/* Danger Zone */}
-        <section className="bg-base-100 border border-error/20 rounded-xl p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-error/10 text-error flex items-center justify-center shrink-0">
-                <Trash2 size={20} />
+              <label htmlFor="register-password" className="text-xs font-medium">
+                Password
+              </label>
+              <div className="relative">
+                <input id="register-password" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required className={inputClassWithIcon} />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
+                </button>
               </div>
-              <div>
-                <h3 className="font-medium text-error">Danger Zone</h3>
-                <p className="text-sm text-base-content/50">Delete your account and all job applications permanently.</p>
-              </div>
+              {errors.password && (
+                <p role="alert" className="text-error text-xs">
+                  {errors.password}
+                </p>
+              )}
             </div>
-            <button type="button" onClick={openDeleteModal} className="btn btn-error btn-sm rounded-xl shadow-none text-base-100">
-              Delete account
+
+            {/* Confirm Password */}
+            <div className="flex flex-col gap-1">
+              <label htmlFor="register-confirmPassword" className="text-xs font-medium">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  id="register-confirmPassword"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className={inputClassWithIcon}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70 cursor-pointer"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                >
+                  {showConfirm ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p role="alert" className="text-error text-xs">
+                  {errors.confirmPassword}
+                </p>
+              )}
+            </div>
+
+            <button type="submit" className="btn btn-primary w-full mt-1" disabled={loading}>
+              {loading ? <span className="loading loading-spinner loading-sm" /> : "Sign Up"}
             </button>
-          </div>
-        </section>
-      </div>
+          </form>
 
-      {/* Delete Modal */}
-      <dialog ref={deleteModalRef} className="modal">
-        <div className="modal-box mx-4 w-[calc(100%-2rem)] max-w-sm rounded-2xl shadow-none border border-base-200">
-          <h3 className="font-medium text-base text-error">Delete account?</h3>
-          <p className="text-sm text-base-content/60 mt-1">This permanently deletes your profile and all job applications.</p>
-
-          <form onSubmit={handleDeleteAccount} className="mt-5 space-y-3">
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={deletePassword}
-              onChange={(e) => setDeletePassword(e.target.value)}
-              required
-              className={inputClass}
-            />
-            {deleteError && <p className="text-sm text-error">{deleteError}</p>}
-
-            <div className="modal-action mt-5 flex-col-reverse gap-2 sm:flex-row">
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm rounded-xl"
-                onClick={() => deleteModalRef.current?.close()}
-                disabled={deleting}
-              >
-                Cancel
-              </button>
-              <button type="submit" className="btn btn-error btn-sm rounded-xl shadow-none text-base-100" disabled={deleting}>
-                {deleting ? <span className="loading loading-spinner loading-xs" /> : "Delete account"}
+          {emailSent && (
+            <div className="alert alert-success rounded-xl text-sm shadow-none flex-col items-start">
+              <span>
+                Account created! Check your email at <strong>{email}</strong> to verify your account.
+              </span>
+              <button type="button" onClick={handleResendVerification} disabled={resendLoading} className="btn btn-success btn-xs rounded-lg shadow-none">
+                {resendLoading ? "Sending..." : "Resend verification email"}
               </button>
             </div>
-          </form>
+          )}
+
+          <p className="text-center text-sm text-base-content/50">
+            Already have an account?{" "}
+            <Link to="/login" className="text-primary font-medium hover:underline">
+              Sign in
+            </Link>
+          </p>
         </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
-    </>
+      </section>
+    </main>
   );
 }

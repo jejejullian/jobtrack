@@ -9,6 +9,7 @@ import StatCards from "../components/dashboard/StatCards";
 import RecentJobs from "../components/dashboard/RecentJobs";
 import FollowUpJobs from "../components/dashboard/FollowUpJobs";
 
+// threshold for follow-up alert
 const FOLLOW_UP_DAYS = 14;
 
 export default function DashboardPage() {
@@ -18,6 +19,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // fetch & normalize jobs
   const fetchJobs = useCallback(async () => {
     try {
       setLoading(true);
@@ -43,6 +45,7 @@ export default function DashboardPage() {
     fetchJobs();
   }, [fetchJobs]);
 
+  // derived stats
   const stats = useMemo(
     () => ({
       total: jobs.length,
@@ -51,10 +54,13 @@ export default function DashboardPage() {
     [jobs],
   );
 
+  // 5 most recent
   const recentJobs = useMemo(() => [...jobs].sort((a, b) => new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime()).slice(0, 5), [jobs]);
 
+  // applied & not updated in 14+ days
   const followUpJobs = useMemo(() => jobs.filter((job) => job.status === "Applied" && job.daysSince >= FOLLOW_UP_DAYS), [jobs]);
 
+  // top insight message
   const insight = useMemo(() => {
     if (followUpJobs.length > 0) {
       return `${followUpJobs.length} application${followUpJobs.length > 1 ? "s" : ""} need follow-up.`;

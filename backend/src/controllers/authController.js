@@ -7,11 +7,13 @@ import { generateToken, hashToken } from "../utils/token.js";
 import { sendVerificationEmail, sendResetPasswordEmail } from "../lib/email.js";
 import dns from "dns/promises";
 
+// constants
 const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000;
 const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000;
 const RESEND_COOLDOWN_MS = 60 * 1000;
 const resendAttempts = new Map();
 
+// helpers
 const checkMxRecord = async (email) => {
   const domain = email.split("@")[1];
   try {
@@ -36,7 +38,7 @@ const enforceResendCooldown = (email) => {
   resendAttempts.set(email, now);
 };
 
-// Register
+// register
 const register = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   const email = normalizeEmail(req.body.email);
@@ -110,7 +112,7 @@ const register = asyncHandler(async (req, res) => {
   res.status(201).json({ message: "Register successful. Please check your email to verify your account" });
 });
 
-// Verify Email
+// verify email
 const verifyEmail = asyncHandler(async (req, res) => {
   const { token } = req.query;
   const email = normalizeEmail(req.query.email);
@@ -161,7 +163,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   res.json({ message: "Email verified successfully. You can now log in." });
 });
 
-// Login
+// login
 const login = asyncHandler(async (req, res) => {
   const { password } = req.body;
   const email = normalizeEmail(req.body.email);
@@ -195,7 +197,7 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
-// Forgot Password
+// forgot password
 const forgotPassword = asyncHandler(async (req, res) => {
   const email = normalizeEmail(req.body.email);
 
@@ -228,7 +230,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   });
 });
 
-// Reset Password
+// reset password
 const resetPassword = asyncHandler(async (req, res) => {
   const { token, password } = req.body;
 
@@ -271,7 +273,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   res.json({ message: "Password reset successful. You can now log in." });
 });
 
-// Resend Verification Email
+// resend verification
 const resendVerification = asyncHandler(async (req, res) => {
   const email = normalizeEmail(req.body.email);
 

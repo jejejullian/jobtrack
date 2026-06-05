@@ -40,19 +40,17 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Cache asset statis saja (JS, CSS, HTML, fonts, images)
-        // Data dari API tidak di-cache → tetap butuh koneksi untuk lihat data
+       
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
         runtimeCaching: [
           {
-            // Cache Google Fonts jika dipakai
             urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/,
             handler: "CacheFirst",
             options: {
               cacheName: "google-fonts",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 tahun
+                maxAgeSeconds: 60 * 60 * 24 * 365,
               },
             },
           },

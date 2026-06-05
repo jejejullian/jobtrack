@@ -61,6 +61,7 @@ export default function ProfilePage() {
       }).format(new Date(profile.createdAt))
     : "-";
 
+  // update username
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     setProfileError("");
@@ -82,6 +83,7 @@ export default function ProfilePage() {
     }
   };
 
+  // change password
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setPasswordError("");
@@ -106,6 +108,7 @@ export default function ProfilePage() {
     }
   };
 
+  // delete account
   const openDeleteModal = () => {
     setDeletePassword("");
     setDeleteError("");

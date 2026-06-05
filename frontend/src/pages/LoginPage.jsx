@@ -17,6 +17,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -40,6 +41,7 @@ export default function LoginPage() {
     }
   };
 
+  // resend verification
   const handleResendVerification = async () => {
     setResendLoading(true);
     try {

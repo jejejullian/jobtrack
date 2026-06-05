@@ -3,6 +3,7 @@ import prisma from "../lib/prisma.js";
 import AppError from "../utils/AppError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
+// select fields
 const userSelect = {
   id: true,
   email: true,
@@ -11,6 +12,7 @@ const userSelect = {
   createdAt: true,
 };
 
+// get profile
 const getMe = asyncHandler(async (req, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.user.id },
@@ -22,6 +24,7 @@ const getMe = asyncHandler(async (req, res) => {
   res.json({ user });
 });
 
+// update username
 const updateMe = asyncHandler(async (req, res) => {
   const username = req.body.username?.trim();
 
@@ -46,6 +49,7 @@ const updateMe = asyncHandler(async (req, res) => {
   res.json({ message: "Profile updated successfully", user });
 });
 
+// change password
 const changePassword = asyncHandler(async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
@@ -74,6 +78,7 @@ const changePassword = asyncHandler(async (req, res) => {
   res.json({ message: "Password updated successfully" });
 });
 
+// delete account
 const deleteMe = asyncHandler(async (req, res) => {
   const { password } = req.body;
 

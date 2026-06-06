@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { CheckCircle, XCircle } from "lucide-react";
 import { verifyEmail, resendVerification } from "../services/api";
 import toast from "react-hot-toast";
 
+const REDIRECT_SECONDS = 5;
+
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
   const [resendEmail, setResendEmail] = useState(() => searchParams.get("email") || "");
   const [resendLoading, setResendLoading] = useState(false);
+  const [countdown, setCountdown] = useState(REDIRECT_SECONDS);
 
   const handleResend = async () => {
     if (!resendEmail) {
@@ -49,6 +53,23 @@ export default function VerifyEmailPage() {
       });
   }, [searchParams]);
 
+  useEffect(() => {
+    if (status !== "success") return;
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          navigate("/login");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [status, navigate]);
+
   return (
     <main
       className="min-h-screen flex items-center justify-center px-4"
@@ -72,8 +93,11 @@ export default function VerifyEmailPage() {
               <CheckCircle size={48} className="text-success" strokeWidth={1.5} />
               <h1 className="text-lg font-semibold">Email Verified!</h1>
               <p className="text-sm text-base-content/60">{message}</p>
+              <p className="text-xs text-base-content/40">
+                Redirecting to login in {countdown}s...
+              </p>
               <Link to="/login" className="btn btn-primary btn-sm rounded-xl shadow-none w-full">
-                Sign In
+                Sign In Now
               </Link>
             </>
           )}

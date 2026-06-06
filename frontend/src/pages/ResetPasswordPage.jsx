@@ -50,10 +50,7 @@ export default function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <main
-        className="min-h-screen flex items-center justify-center px-4"
-        style={{ background: "linear-gradient(135deg, #EEEDFE 0%, #e0e7ff 50%, #E1F5EE 100%)" }}
-      >
+      <main className="min-h-screen flex items-center justify-center px-4" style={{ background: "linear-gradient(135deg, #EEEDFE 0%, #e0e7ff 50%, #E1F5EE 100%)" }}>
         <section className="card bg-base-100 w-full max-w-sm border border-primary/20">
           <div className="card-body gap-4 text-center">
             <p className="text-error text-sm">Invalid or missing reset token.</p>
@@ -94,16 +91,7 @@ export default function ResetPasswordPage() {
                 New Password
               </label>
               <div className="relative">
-                <input
-                  id="reset-password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter new password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoFocus
-                  className={inputClass}
-                />
+                <input id="reset-password" type={showPassword ? "text" : "password"} placeholder="Enter new password" value={password} onChange={(e) => setPassword(e.target.value)} required autoFocus className={inputClass} />
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
@@ -121,15 +109,7 @@ export default function ResetPasswordPage() {
                 Confirm Password
               </label>
               <div className="relative">
-                <input
-                  id="reset-confirm"
-                  type={showConfirm ? "text" : "password"}
-                  placeholder="Confirm new password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className={inputClass}
-                />
+                <input id="reset-confirm" type={showConfirm ? "text" : "password"} placeholder="Confirm new password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className={inputClass} />
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
@@ -141,7 +121,7 @@ export default function ResetPasswordPage() {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full mt-1" disabled={loading}>
+            <button type="submit" className="btn btn-primary w-full mt-1 rounded-2xl" disabled={loading}>
               {loading ? <span className="loading loading-spinner loading-sm" /> : "Reset Password"}
             </button>
 

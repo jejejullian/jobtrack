@@ -96,7 +96,7 @@ export default function VerifyEmailPage() {
               <p className="text-xs text-base-content/40">
                 Redirecting to login in {countdown}s...
               </p>
-              <Link to="/login" className="btn btn-primary btn-sm rounded-xl shadow-none w-full">
+              <Link to="/login" className="btn btn-primary rounded-2xl shadow-none w-full">
                 Sign In Now
               </Link>
             </>
@@ -120,7 +120,7 @@ export default function VerifyEmailPage() {
                 <button
                   onClick={handleResend}
                   disabled={resendLoading || !resendEmail}
-                  className="btn btn-primary btn-sm rounded-xl shadow-none w-full"
+                  className="btn btn-primary btn-sm rounded-2xl shadow-none w-full"
                 >
                   {resendLoading ? <span className="loading loading-spinner loading-xs" /> : "Resend Verification Email"}
                 </button>

@@ -117,7 +117,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full mt-1" disabled={loading}>
+            <button type="submit" className="btn btn-primary w-full mt-1 rounded-2xl" disabled={loading}>
               {loading ? <span className="loading loading-spinner loading-sm" /> : "Sign In"}
             </button>
 

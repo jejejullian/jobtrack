@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, MailCheck } from "lucide-react";
 import { register as registerApi, resendVerification } from "../services/api";
 import toast from "react-hot-toast";
 
@@ -99,112 +99,128 @@ export default function RegisterPage() {
           <header className="flex flex-col items-center gap-2 mb-2">
             <img src="/logo.png" alt="Job Tracker logo" className="h-12 w-auto" />
             <h1 className="text-2xl font-bold text-primary">Job Tracker</h1>
-            <p className="text-sm text-base-content/50">Create your account</p>
+            <p className="text-sm text-base-content/50">{emailSent ? "Verify your email address" : "Create your account"}</p>
           </header>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Email */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="register-email" className="text-xs font-medium">
-                Email
-              </label>
-              <input id="register-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus className={inputClass} />
-              {errors.email && (
-                <p role="alert" className="text-error text-xs">
-                  {errors.email}
-                </p>
-              )}
-            </div>
+          {emailSent ? (
+            <div className="space-y-4">
+              <div className="rounded-xl bg-success p-5 text-left shadow-sm">
+                <h3 className="flex items-center gap-2 font-semibold text-success-content">
+                  <MailCheck size={18} />
+                  Check your inbox
+                </h3>
 
-            {/* Username */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="register-username" className="text-xs font-medium">
-                Username
-              </label>
-              <input id="register-username" type="text" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} required className={inputClass} />
-              {errors.username && (
-                <p role="alert" className="text-error text-xs">
-                  {errors.username}
-                </p>
-              )}
-            </div>
+                <p className="mt-2 text-sm text-success-content/80">We've sent a verification email to:</p>
 
-            {/* Password */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="register-password" className="text-xs font-medium">
-                Password
-              </label>
-              <div className="relative">
-                <input id="register-password" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required className={inputClassWithIcon} />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70 cursor-pointer"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
-                </button>
+                <div className="mt-2 break-all rounded-lg bg-black/10 px-3 py-2 text-sm font-medium text-success-content">{email}</div>
+
+                <p className="mt-2 text-sm text-success-content/80">Please verify your account before signing in.</p>
               </div>
-              {errors.password && (
-                <p role="alert" className="text-error text-xs">
-                  {errors.password}
-                </p>
-              )}
-            </div>
 
-            {/* Confirm Password */}
-            <div className="flex flex-col gap-1">
-              <label htmlFor="register-confirmPassword" className="text-xs font-medium">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  id="register-confirmPassword"
-                  type={showConfirm ? "text" : "password"}
-                  placeholder="Confirm your password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className={inputClassWithIcon}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70 cursor-pointer"
-                  onClick={() => setShowConfirm(!showConfirm)}
-                  aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
-                >
-                  {showConfirm ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
-                </button>
-              </div>
-              {errors.confirmPassword && (
-                <p role="alert" className="text-error text-xs">
-                  {errors.confirmPassword}
-                </p>
-              )}
-            </div>
-
-            <button type="submit" className="btn btn-primary w-full mt-1" disabled={loading}>
-              {loading ? <span className="loading loading-spinner loading-sm" /> : "Sign Up"}
-            </button>
-          </form>
-
-          {emailSent && (
-            <div className="alert alert-success rounded-xl text-sm shadow-none flex-col items-start">
-              <span>
-                Account created! Check your email at <strong>{email}</strong> to verify your account.
-              </span>
-              <button type="button" onClick={handleResendVerification} disabled={resendLoading} className="btn btn-success btn-xs rounded-lg shadow-none">
+              <button type="button" onClick={handleResendVerification} disabled={resendLoading} className="btn btn-outline btn-success w-full rounded-2xl">
                 {resendLoading ? "Sending..." : "Resend verification email"}
               </button>
+
+              <Link to="/login" className="btn btn-primary w-full rounded-2xl">
+                Back to Login
+              </Link>
             </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {/* Email */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="register-email" className="text-xs font-medium">
+                  Email
+                </label>
+                <input id="register-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus className={inputClass} />
+                {errors.email && (
+                  <p role="alert" className="text-error text-xs">
+                    {errors.email}
+                  </p>
+                )}
+              </div>
+
+              {/* Username */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="register-username" className="text-xs font-medium">
+                  Username
+                </label>
+                <input id="register-username" type="text" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} required className={inputClass} />
+                {errors.username && (
+                  <p role="alert" className="text-error text-xs">
+                    {errors.username}
+                  </p>
+                )}
+              </div>
+
+              {/* Password */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="register-password" className="text-xs font-medium">
+                  Password
+                </label>
+                <div className="relative">
+                  <input id="register-password" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required className={inputClassWithIcon} />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70 cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p role="alert" className="text-error text-xs">
+                    {errors.password}
+                  </p>
+                )}
+              </div>
+
+              {/* Confirm Password */}
+              <div className="flex flex-col gap-1">
+                <label htmlFor="register-confirmPassword" className="text-xs font-medium">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="register-confirmPassword"
+                    type={showConfirm ? "text" : "password"}
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className={inputClassWithIcon}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70 cursor-pointer"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                  >
+                    {showConfirm ? <EyeOff size={16} strokeWidth={1.5} /> : <Eye size={16} strokeWidth={1.5} />}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p role="alert" className="text-error text-xs">
+                    {errors.confirmPassword}
+                  </p>
+                )}
+              </div>
+
+              <button type="submit" className="btn btn-primary w-full mt-1" disabled={loading}>
+                {loading ? <span className="loading loading-spinner loading-sm" /> : "Sign Up"}
+              </button>
+            </form>
           )}
 
-          <p className="text-center text-sm text-base-content/50">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary font-medium hover:underline">
-              Sign in
-            </Link>
-          </p>
+          {!emailSent && (
+            <p className="text-center text-sm text-base-content/50">
+              Already have an account?{" "}
+              <Link to="/login" className="text-primary font-medium hover:underline">
+                Sign in
+              </Link>
+            </p>
+          )}
         </div>
       </section>
     </main>

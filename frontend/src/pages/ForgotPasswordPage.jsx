@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { forgotPassword as forgotPasswordApi } from "../services/api";
+import { MailCheck } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function ForgotPasswordPage() {
@@ -33,19 +34,25 @@ export default function ForgotPasswordPage() {
           <header className="flex flex-col items-center gap-2 mb-2">
             <img src="/logo.png" alt="Job Tracker logo" className="h-12 w-auto" />
             <h1 className="text-2xl font-bold text-primary">Forgot Password</h1>
-            <p className="text-sm text-base-content/50 text-center">
-              Enter your email and we'll send a reset link.
-            </p>
+            <p className="text-sm text-base-content/50 text-center">{sent ? "Check your email for the reset link." : "Enter your email to reset your password."}</p>
           </header>
 
           {sent ? (
             <div className="space-y-4">
-              <div className="alert alert-success rounded-xl text-sm shadow-none">
-                <span>
-                  If <strong>{email}</strong> is registered, a reset link has been sent. Check your inbox.
-                </span>
+              <div className="rounded-xl bg-success p-5 text-left shadow-sm">
+                <h3 className="flex items-center gap-2 font-semibold text-success-content">
+                  <MailCheck size={18} />
+                  Check your inbox
+                </h3>
+
+                <p className="mt-2 text-sm text-success-content/80">Check the inbox for:</p>
+
+                <div className="mt-2 break-all rounded-lg bg-black/10 px-3 py-2 text-sm font-medium text-success-content">{email}</div>
+
+                <p className="mt-2 text-sm text-success-content/80">We've sent a password reset link.</p>
               </div>
-              <Link to="/login" className="btn btn-ghost btn-sm rounded-xl w-full">
+
+              <Link to="/login" className="btn btn-primary w-full rounded-2xl">
                 Back to Login
               </Link>
             </div>
@@ -67,7 +74,7 @@ export default function ForgotPasswordPage() {
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary w-full mt-1" disabled={loading}>
+              <button type="submit" className="btn btn-primary w-full mt-1 rounded-2xl" disabled={loading}>
                 {loading ? <span className="loading loading-spinner loading-sm" /> : "Send Reset Link"}
               </button>
 

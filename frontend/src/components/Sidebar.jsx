@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { routes } from "../config/routes";
+import InstallGuide from "./InstallGuide";
 
 // exclude profile from sidebar
 const sidebarMenu = routes.filter((r) => r.path !== "/profile");
@@ -39,6 +40,9 @@ export default function Sidebar({ isCollapsed }) {
             </NavLink>
           ))}
         </nav>
+
+        {/* Install Guide */}
+        {!isCollapsed && <InstallGuide />}
       </div>
     </aside>
   );

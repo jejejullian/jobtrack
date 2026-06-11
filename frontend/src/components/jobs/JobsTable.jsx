@@ -25,7 +25,11 @@ export default function JobsTable({ jobs, onStatusChange, onEdit, onDelete }) {
               <td className="text-base-content/70">{job.position}</td>
               <td className="text-base-content/50 text-sm">{job.location || "-"}</td>
               <td>
-                <StatusBadge status={job.status} onChange={(newStatus) => onStatusChange(job.id, newStatus)} />
+                <StatusBadge
+                  status={job.status}
+                  onChange={(newStatus) => onStatusChange(job.id, newStatus)}
+                  useFixed={true}
+                />
               </td>
               <td className="text-sm text-base-content/60 whitespace-nowrap">{formatDate(job.appliedAt)}</td>
               <td>

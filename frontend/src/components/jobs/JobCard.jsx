@@ -2,8 +2,7 @@ import { Calendar, MapPin } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import { formatDate } from "../../utils/date";
 
-// mobile job card
-export default function JobCard({ job, onDelete, onStatusChange, onEdit }) {
+export default function JobCard({ job, onDelete, onEdit }) {
   return (
     <div className="card card-bordered bg-base-100 shadow-sm">
       <div className="card-body p-4 gap-2">
@@ -13,7 +12,7 @@ export default function JobCard({ job, onDelete, onStatusChange, onEdit }) {
             <h3 className="font-semibold text-base">{job.company}</h3>
             <p className="text-sm text-base-content/60">{job.position}</p>
           </div>
-          <StatusBadge status={job.status} onChange={(newStatus) => onStatusChange(job.id, newStatus)} className="shrink-0" />
+          <StatusBadge status={job.status} className="shrink-0" />
         </div>
 
         {/* Meta */}
@@ -47,10 +46,8 @@ export default function JobCard({ job, onDelete, onStatusChange, onEdit }) {
           <button className="btn btn-ghost btn-xs text-error" onClick={() => onDelete(job.id)}>
             Delete
           </button>
-
           <button className="btn btn-ghost btn-xs text-base-content/60 hover:text-base-content" onClick={() => onEdit(job)}>
-            {" "}
-            Edit{" "}
+            Edit
           </button>
         </div>
       </div>

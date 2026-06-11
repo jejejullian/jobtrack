@@ -10,7 +10,7 @@ A full-stack web application for tracking job applications — add, update, filt
 
 ## Live Demo
 
-🌐 [https://www.jobtracker.my.id](https://www.jobtracker.my.id)
+🌐 [https://jobtracker.my.id](https://jobtracker.my.id)
 
 ---
 

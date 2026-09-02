@@ -2,11 +2,10 @@ import prisma from "@/lib/prisma";
 import AppError from "@/lib/AppError";
 import { normalizeEmail, hashToken } from "@/lib/auth";
 
-export async function POST(req) {
+export async function GET(req) {
   try {
-    const body = await req.json()
-    const { token } = body;
-    const email = normalizeEmail(body.email);
+    const token = req.nextUrl.searchParams.get("token");
+    const email = normalizeEmail(req.nextUrl.searchParams.get("email"));
 
     if (!token) throw new AppError("Verification token is required", 400);
 

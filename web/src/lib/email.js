@@ -21,6 +21,7 @@ const ensureEmailConfig = () => {
   }
 };
 
+// send verification email
 export const sendVerificationEmail = async (email, token) => {
   ensureEmailConfig();
 
@@ -52,5 +53,40 @@ export const sendVerificationEmail = async (email, token) => {
 
   if (error) {
     throw new AppError(error.message || "Failed to send verification email", 502);
+  }
+};
+
+// send reset password email
+export const sendResetPasswordEmail = async (email, token) => {
+  ensureEmailConfig();
+
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${encodeURIComponent(token)}`;
+
+  const { error } = await resend.emails.send({
+    from: process.env.FROM_EMAIL,
+    to: email,
+    subject: "Reset your Job Tracker password",
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+        <h2 style="color: #534ab7;">Reset your password</h2>
+        <p>Click the button below to reset your Job Tracker password.</p>
+        <a href="${resetUrl}"
+           style="display: inline-block; background: #534ab7; color: white;
+                  padding: 12px 24px; border-radius: 8px; text-decoration: none;
+                  font-weight: 600; margin: 16px 0;">
+          Reset Password
+        </a>
+        <p style="color: #888; font-size: 14px;">
+          Link expires in 1 hour. If you didn't request this, ignore this email.
+        </p>
+        <p style="color: #bbb; font-size: 12px;">
+          Or copy this link: ${resetUrl}
+        </p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    throw new AppError(error.message || "Failed to send reset password email", 502);
   }
 };

@@ -4,6 +4,7 @@ import { normalizeEmail, hashToken, generateToken } from "@/lib/auth";
 import { sendResetPasswordEmail } from "@/lib/email";
 
 const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000;
+const RESET_REQUEST_COOLDOWN_MS = 60 * 1000;
 
 export async function POST(req) {
   try {
@@ -23,17 +24,28 @@ export async function POST(req) {
     const rawToken = generateToken();
     const hashedToken = hashToken(rawToken);
     const expiry = new Date(Date.now() + RESET_TOKEN_EXPIRY_MS);
+    const cutoff = new Date(Date.now() - RESET_REQUEST_COOLDOWN_MS);
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        resetToken: hashedToken,
-        resetTokenExpiry: expiry,
+    const result = await prisma.user.updateMany({
+      where: {
+        id: user.id,
+        OR: [{ lastResetRequestAt: null }, { lastResetRequestAt: { lt: cutoff } }],
       },
+      data: { resetToken: hashedToken, resetTokenExpiry: expiry, lastResetRequestAt: new Date() },
     });
 
-    await sendResetPasswordEmail(email, rawToken);
+    if (result.count === 0) {
+      const fresh = await prisma.user.findUnique({ where: { id: user.id }, select: { lastResetRequestAt: true } });
+      if (!fresh) throw new AppError("Something went wrong", 500);
 
+      const elapsed = Date.now() - new Date(fresh.lastResetRequestAt).getTime();
+
+      const waitSeconds = Math.ceil((RESET_REQUEST_COOLDOWN_MS - elapsed) / 1000);
+
+      throw new AppError(`Please wait ${waitSeconds} seconds before requesting another reset link.`, 429, "email");
+    }
+
+    await sendResetPasswordEmail(email, rawToken);
     return Response.json({
       message: "If this email is registered, you will receive a reset link shortly.",
     });

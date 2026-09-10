@@ -24,7 +24,8 @@ model User{
   verifyTokenExpiry DateTime?
   resetToken        String?
   resetTokenExpiry  DateTime?
-  lastResendAt DateTime?
+  lastResendAt      DateTime?
+  lastResetRequestAt DateTime?
 }
 
 model Job{

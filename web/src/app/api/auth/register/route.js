@@ -7,7 +7,6 @@ import dns from "dns/promises";
 // config & state
 const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000;
 const RESEND_COOLDOWN_MS = 60 * 1000;
-const resendAttempts = new Map();
 
 // cek domain email MX record (bisa menerima email atau tidak)
 const checkMxRecord = async (email) => {
@@ -20,18 +19,6 @@ const checkMxRecord = async (email) => {
   }
 };
 
-// cooldown resend verifikasi
-const enforceResendCooldown = (email) => {
-  const now = Date.now();
-  const lastAttemptAt = resendAttempts.get(email);
-
-  if (lastAttemptAt && now - lastAttemptAt < RESEND_COOLDOWN_MS) {
-    const waitSeconds = Math.ceil((RESEND_COOLDOWN_MS - (now - lastAttemptAt)) / 1000);
-    throw new AppError(`Please wait ${waitSeconds} seconds before requesting another verification email.`, 429, "email");
-  }
-
-  resendAttempts.set(email, now);
-};
 
 export async function POST(req) {
   try {
@@ -59,28 +46,37 @@ export async function POST(req) {
       throw new AppError("Email domain does not exist or cannot receive email", 400, "email");
     }
 
-    //  cek apakah email sudah pernah dipakai
+    //  cek email sudah pernah dipakai/belum
     const existingEmail = await prisma.user.findUnique({ where: { email } });
     if (existingEmail) {
       if (existingEmail.isVerified) {
         throw new AppError("Email already in use", 409, "email");
       }
 
-      // email sudah dipakai TAPI belum diverifikasi -> kirim ulang link verifikasi
-      enforceResendCooldown(email);
-
-      // generate token verifikasi baru, timpa yang lama
+      // generate token verifikasi baru
       const rawToken = generateToken();
       const hashedToken = hashToken(rawToken);
       const expiry = new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS);
+      const cutoff = new Date(Date.now() - RESEND_COOLDOWN_MS);
 
-      await prisma.user.update({
-        where: { id: existingEmail.id },
-        data: {
-          verifyToken: hashedToken,
-          verifyTokenExpiry: expiry,
+      const result = await prisma.user.updateMany({
+        where: {
+          id: existingEmail.id,
+          OR: [{ lastResendAt: null }, { lastResendAt: { lt: cutoff } }],
         },
+        data: { verifyToken: hashedToken, verifyTokenExpiry: expiry, lastResendAt: new Date() },
       });
+
+      if (result.count === 0) {
+        const fresh = await prisma.user.findUnique({ where: { id: existingEmail.id }, select: { lastResendAt: true } });
+        if (!fresh) throw new AppError("Something went wrong", 500);
+        
+        const elapsed = Date.now() - new Date(fresh.lastResendAt).getTime();
+        
+        const waitSeconds = Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000);
+        
+        throw new AppError(`Please wait ${waitSeconds} seconds before requesting another verification email.`, 429, "email");
+      }
 
       await sendVerificationEmail(email, rawToken);
 
@@ -105,6 +101,7 @@ export async function POST(req) {
         password: hashed,
         verifyToken: hashedToken,
         verifyTokenExpiry: expiry,
+        lastResendAt: new Date(),
       },
     });
 

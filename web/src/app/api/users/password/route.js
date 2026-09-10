@@ -46,7 +46,7 @@ export async function PATCH(req) {
     return Response.json({ message: "Password updated successfully", user });
   } catch (error) {
     console.error("Error change password:", error);
-    // Mengecek apakah error ini tipe AppError atau error biasa
+    // Cek apakah error berasal dari AppError
     if (error instanceof AppError) {
       return Response.json({ error: error.message, field: error.field }, { status: error.statusCode });
     }

@@ -83,7 +83,7 @@ export async function POST(req) {
       return Response.json({ message: "Register successful. Please check your email to verify your account." }, { status: 200 });
     }
 
-    //  cek username sudah dipakai atau belum
+    //  cek username sudah terpakai/belum
     const existingUsername = await prisma.user.findUnique({ where: { username } });
     if (existingUsername) throw new AppError("Username already taken", 409, "username");
 

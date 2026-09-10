@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import AppError from "@/lib/AppError";
 
-// validasi & convert appliedAt, skip kalau ga dikirim
+// appliedAt tidak wajib, tapi kalau dikirim harus berupa tanggal yang valid
 const parseAppliedAt = (appliedAt) => {
   if (appliedAt === undefined) return undefined;
 
@@ -16,9 +16,8 @@ const parseAppliedAt = (appliedAt) => {
 // GET all jobs
 export async function GET(req) {
   try {
-    // ini dari proxy, bukan langsung dari client
+    // Proxy mengirim userId lewat header x-user-id
     const userId = req.headers.get("x-user-id");
-
     if (!userId) throw new AppError("Unauthorized", 401);
 
     const jobs = await prisma.job.findMany({
@@ -60,7 +59,7 @@ export async function POST(req) {
         status: status || "Applied",
         referenceLink: referenceLink || null,
         notes: notes || null,
-        appliedAt: parseAppliedAt(appliedAt) || new Date(), // default hari ini kalau ga dikirim
+        appliedAt: parseAppliedAt(appliedAt) || new Date(), 
         userId: parseInt(userId),
       },
     });

@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import AppError from "@/lib/AppError";
 
-// validasi & convert appliedAt, skip kalau tdk dikirim
+// validasi & convert appliedAt, skip jika tdk dikirim
 const parseAppliedAt = (appliedAt) => {
   if (appliedAt === undefined) return undefined;
 
@@ -25,7 +25,7 @@ export async function GET(req, { params }) {
 
     if (Number.isNaN(id)) throw new AppError("Invalid job id", 400);
 
-    // filter id + userId, agar tdk bisa akses job orang lain
+    // filter id + userId, supya tdk bisa akses job orang lain
     const job = await prisma.job.findFirst({
       where: { id, userId: parseInt(userId) },
     });
@@ -62,7 +62,7 @@ export async function PUT(req, { params }) {
     const body = await req.json();
     const { company, position, location, status, referenceLink, notes, appliedAt } = body;
 
-    // hanya validasi kalau field-nya memang dikirim di request
+    // Kalau field dikirim, pastikan tidak kosong
     if (company !== undefined && !company) {
       throw new AppError("Company is required", 400, "company");
     }

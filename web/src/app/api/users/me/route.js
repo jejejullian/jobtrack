@@ -78,21 +78,18 @@ export async function DELETE(req) {
 
     if (!password) throw new AppError("Password is required", 400, "password");
 
+    // Ambil user lengkap karena butuh password-nya untuk dicek
     const user = await prisma.user.findUnique({
       where: { id: parseInt(userId) },
-    }); // full record perlu di sini karena harus baca user.password buat bcrypt.compare
-
+    });
     if (!user) throw new AppError("User not found", 404);
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new AppError("Password is incorrect", 400, "password");
 
-    await prisma.$transaction([
-      prisma.job.deleteMany({ where: { userId: parseInt(userId) } }),
-      prisma.user.delete({ where: { id: parseInt(userId) } }),
-    ]);
+    await prisma.$transaction([prisma.job.deleteMany({ where: { userId: parseInt(userId) } }), prisma.user.delete({ where: { id: parseInt(userId) } })]);
 
-    return Response.json({ message: "Account deleted successfully" }); // ⬅ "user" dihapus dari response
+    return Response.json({ message: "Account deleted successfully" });
   } catch (error) {
     console.error("Error deleting account:", error);
     if (error instanceof AppError) {

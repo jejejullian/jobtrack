@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import AppError from "./AppError";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 

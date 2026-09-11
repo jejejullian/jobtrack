@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import AppError from "@/lib/AppError";
 import bcrypt from "bcryptjs";
+import { requireAuthUserId } from "@/lib/auth";
+
 
 const userSelect = {
   id: true,
@@ -13,7 +15,7 @@ const userSelect = {
 // get profile
 export async function GET(req) {
   try {
-    const userId = req.headers.get("x-user-id");
+    const userId = requireAuthUserId(req);
     if (!userId) throw new AppError("Unauthorized", 401);
 
     const user = await prisma.user.findUnique({
@@ -36,7 +38,7 @@ export async function GET(req) {
 // update username
 export async function PATCH(req) {
   try {
-    const userId = req.headers.get("x-user-id");
+    const userId = requireAuthUserId(req);
     if (!userId) throw new AppError("Unauthorized", 401);
 
     const body = await req.json();
@@ -70,7 +72,7 @@ export async function PATCH(req) {
 // delete account
 export async function DELETE(req) {
   try {
-    const userId = req.headers.get("x-user-id");
+    const userId = requireAuthUserId(req);
     if (!userId) throw new AppError("Unauthorized", 401);
 
     const body = await req.json();

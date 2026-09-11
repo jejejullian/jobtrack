@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import AppError from "@/lib/AppError";
+import { requireAuthUserId } from "@/lib/auth";
+
 
 // appliedAt tidak wajib, tapi kalau dikirim harus berupa tanggal yang valid
 const parseAppliedAt = (appliedAt) => {
@@ -17,7 +19,7 @@ const parseAppliedAt = (appliedAt) => {
 export async function GET(req) {
   try {
     // Proxy mengirim userId lewat header x-user-id
-    const userId = req.headers.get("x-user-id");
+    const userId = requireAuthUserId(req);
     if (!userId) throw new AppError("Unauthorized", 401);
 
     const jobs = await prisma.job.findMany({
@@ -40,7 +42,7 @@ export async function GET(req) {
 // POST create job
 export async function POST(req) {
   try {
-    const userId = req.headers.get("x-user-id");
+    const userId = requireAuthUserId(req);
 
     if (!userId) throw new AppError("Unauthorized", 401);
 

@@ -25,3 +25,14 @@ export const hashToken = (token) => crypto.createHash("sha256").update(token).di
 
 // Sanitize email: remove spaces and lowercase
 export const normalizeEmail = (email) => email?.trim().toLowerCase();
+
+// Verifikasi ulang JWT di Route Handler sebagai lapisan keamanan tambahan
+export function requireAuthUserId(req) {
+  const token = req.cookies.get("token")?.value;
+  if (!token) throw new AppError("Unauthorized", 401);
+
+  const decoded = verifyToken(token);
+  if (!decoded) throw new AppError("Unauthorized", 401);
+
+  return decoded.userId;
+}

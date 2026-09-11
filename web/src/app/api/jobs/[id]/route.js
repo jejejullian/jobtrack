@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import AppError from "@/lib/AppError";
+import { requireAuthUserId } from "@/lib/auth";
+
 
 // validasi & convert appliedAt, skip jika tdk dikirim
 const parseAppliedAt = (appliedAt) => {
@@ -16,7 +18,7 @@ const parseAppliedAt = (appliedAt) => {
 // GET job by id
 export async function GET(req, { params }) {
   try {
-    const userId = req.headers.get("x-user-id");
+    const userId = requireAuthUserId(req);
 
     if (!userId) throw new AppError("Unauthorized", 401);
 
@@ -47,7 +49,7 @@ export async function GET(req, { params }) {
 // PUT update job
 export async function PUT(req, { params }) {
   try {
-    const userId = req.headers.get("x-user-id");
+    const userId = requireAuthUserId(req);
     if (!userId) throw new AppError("Unauthorized", 401);
 
     const { id: idParam } = await params;
@@ -88,7 +90,7 @@ export async function PUT(req, { params }) {
 // DELETE job
 export async function DELETE(req, { params }) {
   try {
-    const userId = req.headers.get("x-user-id");
+    const userId = requireAuthUserId(req);
 
     if (!userId) throw new AppError("Unauthorized", 401);
 

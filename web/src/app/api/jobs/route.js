@@ -2,7 +2,6 @@ import prisma from "@/lib/prisma";
 import AppError from "@/lib/AppError";
 import { requireAuthUserId } from "@/lib/auth";
 
-
 // appliedAt tidak wajib, tapi kalau dikirim harus berupa tanggal yang valid
 const parseAppliedAt = (appliedAt) => {
   if (appliedAt === undefined) return undefined;
@@ -18,7 +17,7 @@ const parseAppliedAt = (appliedAt) => {
 // GET all jobs
 export async function GET(req) {
   try {
-    // Proxy mengirim userId lewat header x-user-id
+    // Verifikasi ulang JWT sebagai lapisan keamanan tambahan
     const userId = requireAuthUserId(req);
     if (!userId) throw new AppError("Unauthorized", 401);
 
@@ -61,7 +60,7 @@ export async function POST(req) {
         status: status || "Applied",
         referenceLink: referenceLink || null,
         notes: notes || null,
-        appliedAt: parseAppliedAt(appliedAt) || new Date(), 
+        appliedAt: parseAppliedAt(appliedAt) || new Date(),
         userId: parseInt(userId),
       },
     });

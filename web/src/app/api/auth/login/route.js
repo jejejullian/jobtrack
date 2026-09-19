@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 import AppError from "@/lib/AppError";
 import { comparePassword, signToken, normalizeEmail } from "@/lib/auth";
 
-// konfigurasi lockout — urutan durasi (ms) berdasarkan jumlah gagal berturut-turut
+// lockout setelah 5 kali gagal
 const LOCKOUT_THRESHOLD = 5;
 const LOCKOUT_DURATIONS_MS = [30 * 1000, 60 * 1000, 5 * 60 * 1000, 15 * 60 * 1000, 30 * 60 * 1000];
 
-// hitung durasi lockout berdasarkan jumlah percobaan gagal
+// ambil durasi berdasarkan jumlah gagal login
 const getLockoutDurationMs = (failedAttempts) => {
   const index = failedAttempts - LOCKOUT_THRESHOLD;
   const clampedIndex = Math.min(index, LOCKOUT_DURATIONS_MS.length - 1);
@@ -27,7 +27,7 @@ export async function POST(req) {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) throw new AppError("Invalid email or password", 401);
 
-    // cek dulu apakah akun ini sedang dikunci, sebelum sempat cek password sama sekali
+    // cek apakah akun masih dalam masa lockout
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       const remainingMs = user.lockedUntil.getTime() - Date.now();
       const remainingSeconds = Math.ceil(remainingMs / 1000);
@@ -46,8 +46,7 @@ export async function POST(req) {
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
-      // password salah — increment counter secara atomic di level database,
-      // biar gak ada celah waktu antara "baca" dan "tulis" kalau ada request nyaris bersamaan
+      // password salah, tambah jumlah percobaan gagal
       const updatedUser = await prisma.user.update({
         where: { id: user.id },
         data: { failedLoginAttempts: { increment: 1 } },
@@ -71,7 +70,7 @@ export async function POST(req) {
       throw new AppError("Please verify your email before loggin in. Check your inbox", 403, "email");
     }
 
-    // login berhasil — reset counter lockout
+    // login berhasil, reset counter lockout
     if (user.failedLoginAttempts > 0 || user.lockedUntil) {
       await prisma.user.update({
         where: { id: user.id },

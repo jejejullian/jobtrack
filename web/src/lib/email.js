@@ -88,8 +88,7 @@ export const sendOverwriteNotice = async (email, newUsername) => {
   });
 
   if (error) {
-    // sengaja tidak throw — kegagalan kirim notice ini
-    // tidak boleh menggagalkan proses registrasi utama
+   // tidak throw, notif gagal tidak-apa
     console.error("Failed to send overwrite notice:", error.message);
   }
 };

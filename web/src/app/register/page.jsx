@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"; // tambah useEffect untuk render ulang turnstile saat mount
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import { Eye, EyeOff, MailCheck } from "lucide-react";
@@ -34,18 +34,7 @@ export default function Register() {
   });
   const [loading, setLoading] = useState(false);
 
-  // Helpers
-  const getErrorField = (message) => {
-    const lowerMessage = message.toLowerCase();
-
-    if (lowerMessage.includes("email")) return "email";
-    if (lowerMessage.includes("username")) return "username";
-    if (lowerMessage.includes("password")) return "password";
-
-    return "password";
-  };
-
-  // Client-side validation
+  // validasi field sebelum submit ke backend
   const validate = () => {
     const newErrors = {
       email: "",
@@ -80,7 +69,7 @@ export default function Register() {
     return Object.values(newErrors).every((error) => error === "");
   };
 
-  // re-render turnstile widget setiap komponen mount
+  // re-render turnstile widget setiap komponen dimuat
   useEffect(() => {
     let widgetId = null;
     let cancelled = false;
@@ -97,7 +86,7 @@ export default function Register() {
         });
         setTurnstileWidgetId(widgetId);
       } else {
-        // BARU: kalau script belum siap, coba lagi 100ms kemudian
+        // Coba lagi jika file JavaScript Turnstile belum selesai dimuat oleh browser
         setTimeout(renderTurnstile, 100);
       }
     }
@@ -105,7 +94,8 @@ export default function Register() {
     renderTurnstile();
 
     return () => {
-      cancelled = true; // BARU: cegah render setelah unmount
+      // Hentikan proses render dan hapus widget dari DOM jika user keburu pindah halaman
+      cancelled = true;
       if (widgetId !== null && window.turnstile) {
         window.turnstile.remove(widgetId);
       }
@@ -132,11 +122,10 @@ export default function Register() {
     } catch (err) {
       const message = err.message || "Failed to register";
 
-      // BARU: cuma field yang benar-benar dikenal UI ini yang boleh nempel ke input
+      // Error field spesifik akan ditempel ke input, sedangkan error 500, jaringan, atau field asing dialihkan ke toast.
       const knownFields = ["email", "username", "password", "turnstileToken"];
 
       if (err.field && knownFields.includes(err.field)) {
-        // kasus normal: validation error dari backend, field-nya jelas
         setErrors({
           email: "",
           username: "",
@@ -146,14 +135,13 @@ export default function Register() {
           [err.field]: message,
         });
       } else {
-        // BARU: kasus 500 / network failure / field asing — jangan nempel ke field manapun
         toast.add({
           type: "error",
           description: message,
         });
       }
 
-      // reset widget Turnstile + token lama, tetap jalan di kedua kasus
+      // token turnstile sekali pakai, reset widget biar user captcha ulang
       if (turnstileWidgetId !== null && window.turnstile) {
         window.turnstile.reset(turnstileWidgetId);
       }

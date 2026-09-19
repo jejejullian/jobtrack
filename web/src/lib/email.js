@@ -56,6 +56,44 @@ export const sendVerificationEmail = async (email, token) => {
   }
 };
 
+// send notice saat ada resend/overwrite ke email yang belum verified
+export const sendOverwriteNotice = async (email, newUsername) => {
+  ensureEmailConfig();
+
+  const { error } = await resend.emails.send({
+    from: process.env.FROM_EMAIL,
+    to: email,
+    subject: "New registration attempt on your pending Job Tracker account",
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+        <h2 style="color: #534ab7;">Registration details were updated</h2>
+        <p>
+          Someone just submitted a new registration for this email address,
+          using the username <strong>${newUsername}</strong> and a new password.
+        </p>
+        <p>
+          If this was you, you can ignore this message — just use the verification
+          email that follows to activate your account.
+        </p>
+        <p style="color: #c0392b; font-weight: 600;">
+          If this was NOT you, do not click the verification link that follows.
+          Someone else may be trying to take over this pending registration.
+        </p>
+        <p style="color: #888; font-size: 14px;">
+          This account has not been verified yet, so no one can log in until
+          a verification link is clicked.
+        </p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    // sengaja tidak throw — kegagalan kirim notice ini
+    // tidak boleh menggagalkan proses registrasi utama
+    console.error("Failed to send overwrite notice:", error.message);
+  }
+};
+
 // send reset password email
 export const sendResetPasswordEmail = async (email, token) => {
   ensureEmailConfig();

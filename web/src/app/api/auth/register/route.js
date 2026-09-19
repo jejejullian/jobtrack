@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import AppError from "@/lib/AppError";
 import { hashPassword, generateToken, hashToken, normalizeEmail } from "@/lib/auth";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendVerificationEmail, sendOverwriteNotice } from "@/lib/email";
 import dns from "dns/promises";
 
 // config & state
@@ -19,11 +19,10 @@ const checkMxRecord = async (email) => {
   }
 };
 
-
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { username, password } = body;
+    const { username, password, turnstileToken } = body;
     const email = normalizeEmail(body.email);
 
     //  validasi input dasar
@@ -40,6 +39,26 @@ export async function POST(req) {
       throw new AppError("Password must contain at least one number", 400, "password");
     }
 
+    // validasi turnstile token SEBELUM proses apa pun
+    if (!turnstileToken) {
+      throw new AppError("CAPTCHA verification is required", 400, "turnstileToken");
+    }
+
+    const turnstileRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        secret: process.env.TURNSTILE_SECRET_KEY, 
+        response: turnstileToken,
+      }),
+    });
+
+    const turnstileData = await turnstileRes.json();
+
+    if (!turnstileData.success) {
+      throw new AppError("CAPTCHA verification failed. Please try again.", 400, "turnstileToken");
+    }
+
     //  validasi domain email (tolak email dari domain fiktif)
     const hasMx = await checkMxRecord(email);
     if (!hasMx) {
@@ -48,39 +67,48 @@ export async function POST(req) {
 
     //  cek email sudah pernah dipakai/belum
     const existingEmail = await prisma.user.findUnique({ where: { email } });
+
     if (existingEmail) {
       if (existingEmail.isVerified) {
         throw new AppError("Email already in use", 409, "email");
       }
 
-      // generate token verifikasi baru
-      const rawToken = generateToken();
-      const hashedToken = hashToken(rawToken);
-      const expiry = new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS);
+      // cek cooldown SEBELUM proses apa pun
       const cutoff = new Date(Date.now() - RESEND_COOLDOWN_MS);
-
-      const result = await prisma.user.updateMany({
-        where: {
-          id: existingEmail.id,
-          OR: [{ lastResendAt: null }, { lastResendAt: { lt: cutoff } }],
-        },
-        data: { verifyToken: hashedToken, verifyTokenExpiry: expiry, lastResendAt: new Date() },
-      });
-
-      if (result.count === 0) {
-        const fresh = await prisma.user.findUnique({ where: { id: existingEmail.id }, select: { lastResendAt: true } });
-        if (!fresh) throw new AppError("Something went wrong", 500);
-        
-        const elapsed = Date.now() - new Date(fresh.lastResendAt).getTime();
-        
+      if (existingEmail.lastResendAt && existingEmail.lastResendAt > cutoff) {
+        const elapsed = Date.now() - new Date(existingEmail.lastResendAt).getTime();
         const waitSeconds = Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000);
-        
         throw new AppError(`Please wait ${waitSeconds} seconds before requesting another verification email.`, 429, "email");
       }
 
+      // cek username baru tidak dipakai user LAIN (exclude diri sendiri)
+      if (username !== existingEmail.username) {
+        const usernameTaken = await prisma.user.findUnique({ where: { username } });
+        if (usernameTaken && usernameTaken.id !== existingEmail.id) {
+          throw new AppError("Username already taken", 409, "username");
+        }
+      }
+
+      const hashed = await hashPassword(password);
+      const rawToken = generateToken();
+      const hashedToken = hashToken(rawToken);
+      const expiry = new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS);
+
+      await prisma.user.update({
+        where: { id: existingEmail.id },
+        data: {
+          username,
+          password: hashed,
+          verifyToken: hashedToken,
+          verifyTokenExpiry: expiry,
+          lastResendAt: new Date(),
+        },
+      });
+
+      await sendOverwriteNotice(email, username);
       await sendVerificationEmail(email, rawToken);
 
-      return Response.json({ message: "Register successful. Please check your email to verify your account." }, { status: 200 });
+      return Response.json({ message: "This email already has a pending registration. We've updated your details and resent the verification email." }, { status: 200 });
     }
 
     //  cek username sudah terpakai/belum

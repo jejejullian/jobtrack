@@ -105,7 +105,7 @@ export default function VerifyEmail() {
               <h1 className="text-lg font-semibold">Email Verified!</h1>
               <p className="text-sm text-muted-foreground">{message}</p>
               <p className="text-xs text-muted-foreground/70">Redirecting to login in {countdown}s...</p>
-              <Button asChild className="w-full h-10 rounded-2xl">
+              <Button className="w-full h-10 rounded-2xl cursor-pointer">
                 <Link href="/login">Sign In Now</Link>
               </Button>
             </>
@@ -119,13 +119,7 @@ export default function VerifyEmail() {
 
               <div className="w-full space-y-2">
                 <p className="text-xs text-muted-foreground">Need a new verification link?</p>
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={resendEmail}
-                  onChange={(e) => setResendEmail(e.target.value)}
-                  className="h-10 rounded-xl focus-visible:ring-0 focus-visible:border-primary"
-                />
+                <Input type="email" placeholder="Enter your email" value={resendEmail} onChange={(e) => setResendEmail(e.target.value)} className="h-10 rounded-xl focus-visible:ring-0 focus-visible:border-primary" />
                 <Button onClick={handleResend} disabled={resendLoading || !resendEmail} className="w-full h-10 rounded-2xl cursor-pointer">
                   {resendLoading ? <span className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent" /> : "Resend Verification Email"}
                 </Button>

@@ -82,7 +82,7 @@ export const deleteAccount = (data) =>
 export const verifyEmail = (token, email = "") => {
   const params = new URLSearchParams({ token });
   if (email) params.set("email", email);
-  return fetchApi(`/api/auth/verify?${params.toString()}`);
+  return fetchApi(`/api/auth/verify-email?${params.toString()}`);
 };
 
 export const forgotPassword = (data) =>

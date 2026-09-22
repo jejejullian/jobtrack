@@ -1,0 +1,93 @@
+import { useCallback, useMemo, useState } from "react";
+import { deleteJob, getJobs, updateJob } from "@/services/api";
+
+// month aliases for search (en + id)
+const MONTH_SEARCH_TERMS = [
+  ["january", "jan", "januari"],
+  ["february", "feb", "februari"],
+  ["march", "mar", "maret"],
+  ["april", "apr"],
+  ["may", "mei"],
+  ["june", "jun", "juni"],
+  ["july", "jul", "juli"],
+  ["august", "aug", "agustus", "agu"],
+  ["september", "sep"],
+  ["october", "oct", "oktober", "okt"],
+  ["november", "nov"],
+  ["december", "dec", "desember", "des"],
+];
+
+// job list state, filters, CRUD
+export function useJobs(initialJobs = []) {
+  const [jobs, setJobs] = useState(initialJobs);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("All");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const refetchJobs = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getJobs();
+      setJobs(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const displayedJobs = useMemo(
+    () =>
+      [...jobs]
+        .filter((job) => {
+          const q = search.toLowerCase().trim();
+          const date = new Date(job.appliedAt);
+          const monthMatches = MONTH_SEARCH_TERMS[date.getMonth()].some((m) => m.includes(q));
+          const year = date.getFullYear().toString();
+
+          return job.company.toLowerCase().includes(q) || job.position.toLowerCase().includes(q) || monthMatches || year.includes(q);
+        })
+        .filter((job) => (filter === "All" ? true : job.status === filter))
+        .sort((a, b) => (sortOrder === "desc" ? new Date(b.appliedAt) - new Date(a.appliedAt) : new Date(a.appliedAt) - new Date(b.appliedAt))),
+    [filter, jobs, search, sortOrder],
+  );
+
+  const deleteJobById = async (id) => {
+    await deleteJob(id);
+    setJobs((prev) => prev.filter((job) => job.id !== id));
+  };
+
+  const updateJobStatus = async (id, newStatus) => {
+    await updateJob(id, { status: newStatus });
+    setJobs((prev) => prev.map((job) => (job.id === id ? { ...job, status: newStatus } : job)));
+  };
+
+  const saveJobResult = (result, isEdit) => {
+    if (isEdit) {
+      setJobs((prev) => prev.map((job) => (job.id === result.id ? result : job)));
+      return;
+    }
+
+    setJobs((prev) => [...prev, result]);
+  };
+
+  return {
+    jobs,
+    displayedJobs,
+    search,
+    setSearch,
+    filter,
+    setFilter,
+    sortOrder,
+    setSortOrder,
+    loading,
+    error,
+    refetchJobs,
+    deleteJobById,
+    updateJobStatus,
+    saveJobResult,
+  };
+}

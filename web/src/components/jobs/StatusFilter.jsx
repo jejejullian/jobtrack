@@ -12,7 +12,7 @@ export default function StatusFilter({ value, onChange }) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button type="button" size="sm" className="rounded-xl shadow-none gap-1.5">
+          <Button type="button" size="sm" className="h-8 rounded-xl shadow-none gap-1.5 cursor-pointer">
             <Funnel size={14} />
             {value === "All" ? "Filter" : value}
           </Button>
@@ -21,7 +21,7 @@ export default function StatusFilter({ value, onChange }) {
 
       <DropdownMenuContent align="start" className="w-44">
         {JOB_FILTER_STATUSES.map((status) => (
-          <DropdownMenuItem key={status} onClick={() => onChange(status)} className={value === status ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground"}>
+          <DropdownMenuItem key={status} onClick={() => onChange(status)} className={value === status ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground cursor-pointer"}>
             {status}
           </DropdownMenuItem>
         ))}

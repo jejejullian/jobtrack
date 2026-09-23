@@ -15,7 +15,7 @@ export default function SortDropdown({ value, onChange }) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button type="button" variant="outline" size="sm" className="rounded-xl border-primary text-primary hover:bg-primary/5 gap-1.5">
+          <Button type="button" variant="outline" size="sm" className="h-8 rounded-xl border-primary text-primary hover:bg-primary/5 gap-1.5 cursor-pointer">
             <ArrowUpDown size={14} />
             {value === "desc" ? "Newest" : "Oldest"}
           </Button>
@@ -24,7 +24,7 @@ export default function SortDropdown({ value, onChange }) {
 
       <DropdownMenuContent align="start" className="w-44">
         {SORT_OPTIONS.map((option) => (
-          <DropdownMenuItem key={option.value} onClick={() => onChange(option.value)} className={value === option.value ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground"}>
+          <DropdownMenuItem key={option.value} onClick={() => onChange(option.value)} className={value === option.value ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground cursor-pointer"}>
             {option.label}
           </DropdownMenuItem>
         ))}

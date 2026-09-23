@@ -23,16 +23,13 @@ export default function SearchBar({ value, onChange }) {
           h-8
           w-full
           rounded-xl
-          border-2
-          border-border
           bg-background
           pl-10
           pr-4
           text-sm
           outline-none
           placeholder:text-muted-foreground
-          focus:border-primary
-          focus:ring-0
+          focus-visible:ring-0 focus-visible:border-primary
         "
       />
     </label>

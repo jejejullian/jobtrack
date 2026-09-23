@@ -17,7 +17,7 @@ export default function JobsToolbar({ search, onSearchChange, filter, onFilterCh
         <Button
           onClick={onAdd}
           size="sm"
-          className="hidden whitespace-nowrap rounded-xl shadow-none lg:flex"
+          className="hidden h-8 whitespace-nowrap rounded-xl shadow-none lg:flex cursor-pointer"
         >
           <Plus size={18} />
           Add Job

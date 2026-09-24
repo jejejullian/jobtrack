@@ -105,9 +105,7 @@ export default function VerifyEmail() {
               <h1 className="text-lg font-semibold">Email Verified!</h1>
               <p className="text-sm text-muted-foreground">{message}</p>
               <p className="text-xs text-muted-foreground/70">Redirecting to login in {countdown}s...</p>
-              <Button className="w-full h-10 rounded-2xl cursor-pointer">
-                <Link href="/login">Sign In Now</Link>
-              </Button>
+             <Button className="w-full h-10 rounded-2xl cursor-pointer" render={<Link href="/login">Sign In Now</Link>} />
             </>
           )}
 

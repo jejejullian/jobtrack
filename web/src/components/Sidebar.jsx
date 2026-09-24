@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { routes } from "@/config/route";
 import InstallGuide from "./InstallGuide";
+import Image from "next/image";
 
 // exclude profile from sidebar
 const sidebarMenu = routes.filter((r) => r.path !== "/profile");
@@ -26,7 +27,7 @@ export default function Sidebar({ isCollapsed }) {
         <div className="border-b border-border">
           <div className="flex items-center px-4 py-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
-              <img src="/logo.png" alt="Job Tracker" className="h-7 md:h-8 w-auto" />
+              <Image src="/logo.png" width={1254} height={1254} alt="Job Tracker" className="h-7 md:h-8 w-auto" />
             </div>
             {!isCollapsed && <span className="ml-3 font-bold text-xl md:text-2xl whitespace-nowrap">Job Tracker</span>}
           </div>

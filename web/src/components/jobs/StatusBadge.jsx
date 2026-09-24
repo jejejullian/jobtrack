@@ -64,7 +64,7 @@ export default function StatusBadge({ status, onChange, className = "", useFixed
               onChange(option);
               setOpen(false);
             }}
-            className={`w-full text-left rounded-lg text-xs px-3 py-1.5 transition-colors
+            className={`w-full text-left rounded-lg text-xs px-3 py-1.5 transition-colors cursor-pointer
               ${status === option
                 ? "bg-primary/10 text-primary font-medium"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"

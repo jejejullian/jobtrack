@@ -109,7 +109,7 @@ export default function InstallGuide() {
 
             <div className="mb-3 flex gap-1">
               {OS_TABS.map(({ key, label }) => (
-                <button key={key} onClick={() => setOs(key)} className={`rounded-lg px-2.5 py-1 text-xs transition-colors ${os === key ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground hover:bg-muted"}`}>
+                <button key={key} onClick={() => setOs(key)} className={`rounded-lg px-2.5 py-1 text-xs transition-colors cursor-pointer ${os === key ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground hover:bg-muted"}`}>
                   {label}
                 </button>
               ))}

@@ -33,14 +33,14 @@ function ConfirmModal({
         )}
 
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button variant="ghost" size="sm" onClick={handleCancel} className="w-full rounded-xl sm:w-auto">
+          <Button variant="ghost" size="sm" onClick={handleCancel} className="w-full rounded-xl sm:w-auto cursor-pointer">
             Cancel
           </Button>
 
           <Button
             variant={confirmVariant}
             size="sm"
-            className="w-full rounded-xl shadow-none sm:w-auto"
+            className="w-full rounded-xl shadow-none sm:w-auto cursor-pointer"
             onClick={handleConfirm}
           >
             {confirmLabel}

@@ -42,10 +42,10 @@ export default function JobsTable({ jobs, onStatusChange, onEdit, onDelete }) {
                 )}
               </td>
               <td className="flex items-center justify-center gap-1 px-3 py-2">
-                <Button variant="ghost" size="sm" onClick={() => onEdit(job)} className="h-7 w-7 p-0 text-muted-foreground/50 hover:bg-transparent hover:text-foreground">
+                <Button variant="ghost" size="sm" onClick={() => onEdit(job)} className="h-7 w-7 p-0 text-muted-foreground/50 hover:bg-transparent hover:text-foreground cursor-pointer">
                   <Pencil size={14} />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => onDelete(job.id)} className="h-7 w-7 p-0 text-destructive/50 hover:bg-transparent hover:text-destructive">
+                <Button variant="ghost" size="sm" onClick={() => onDelete(job.id)} className="h-7 w-7 p-0 text-destructive/50 hover:bg-transparent hover:text-destructive cursor-pointer">
                   <Trash2 size={14} />
                 </Button>
               </td>

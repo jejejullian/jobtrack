@@ -11,7 +11,7 @@ export default function Layout({ children }) {
 
   return (
     <div className="flex h-dvh overflow-hidden bg-muted">
-      {/* Overlay Mobile — cuma tampil kalau mobileOpen true, CSS md:hidden jaga-jaga di desktop */}
+      {/* Overlay Mobile — tampil jika mobileOpen true*/}
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 z-30 bg-black/30"
@@ -20,12 +20,12 @@ export default function Layout({ children }) {
         />
       )}
 
-      {/* Sidebar Desktop — selalu di-mount, CSS yang nentuin tampil/nggak */}
+      {/* Sidebar Desktop */}
       <div className="hidden md:block">
         <Sidebar isCollapsed={isCollapsed} />
       </div>
 
-      {/* Sidebar Mobile — selalu di-mount, slide in/out pakai transform */}
+      {/* Sidebar Mobile*/}
       <div
         className={`
           md:hidden fixed inset-y-0 left-0 z-40

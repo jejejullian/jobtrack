@@ -119,7 +119,7 @@ export default function JobsPageClient({ initialJobs }) {
           title="No jobs yet"
           description="Add your first job application to start tracking progress."
           action={
-            <Button onClick={openAddModal} size="sm" className="rounded-xl shadow-none">
+            <Button onClick={openAddModal} size="sm" className="rounded-xl shadow-none cursor-pointer">
               <Plus size={16} />
               Add Job
             </Button>

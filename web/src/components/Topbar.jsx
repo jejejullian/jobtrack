@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 import { useAuth } from "@/context/auth";
 import { routes } from "@/config/route";
 import ConfirmModal from "./ConfirmModal";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/toast";
 
 // map path → page title
@@ -69,19 +69,19 @@ export default function Topbar({ onMenuClick, onSidebarToggle }) {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end" className="w-48 p-0 overflow-hidden rounded-xl">
-              <DropdownMenuLabel className="px-3.5 py-3 border-b border-border">
+              <div className="px-3.5 py-3 border-b border-border">
                 <p className="text-sm font-medium truncate text-foreground">{user?.username}</p>
                 <p className="text-[11px] text-muted-foreground truncate mt-0.5">{user?.email}</p>
-              </DropdownMenuLabel>
+              </div>
 
-              <DropdownMenuItem onClick={handleProfile} className="gap-2.5 px-3.5 py-2.5 text-sm rounded-none">
+              <DropdownMenuItem onClick={handleProfile} className="gap-2.5 px-3.5 py-2.5 text-sm rounded-none cursor-pointer">
                 <User size={15} aria-hidden="true" />
                 Profile
               </DropdownMenuItem>
 
               <DropdownMenuSeparator className="m-0" />
 
-              <DropdownMenuItem onClick={openLogoutModal} className="gap-2.5 px-3.5 py-2.5 text-sm text-destructive/80 focus:bg-destructive/10 focus:text-destructive rounded-none">
+              <DropdownMenuItem onClick={openLogoutModal} className="gap-2.5 px-3.5 py-2.5 text-sm text-destructive/80 focus:bg-destructive/10 focus:text-destructive rounded-none cursor-pointer">
                 <LogOut size={15} aria-hidden="true" />
                 Logout
               </DropdownMenuItem>

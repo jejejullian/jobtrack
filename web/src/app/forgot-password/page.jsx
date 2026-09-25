@@ -60,8 +60,8 @@ export default function ForgotPasswordPage() {
                 <p className="mt-2 text-sm text-green-700 dark:text-green-400">We&apos;ve sent a password reset link.</p>
               </div>
 
-              <Button className="w-full h-10 rounded-2xl cursor-pointer">
-                <Link href="/login">Back to Login</Link>
+              <Button render={<Link href="/login" />} className="w-full h-10 rounded-2xl">
+                Back to Login
               </Button>
             </div>
           ) : (

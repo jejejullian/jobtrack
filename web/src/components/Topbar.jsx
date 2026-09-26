@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Sun, Moon, User, LogOut, Menu, PanelLeft } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useAuth } from "@/context/auth";
+import { useAuth } from "@/context/AuthContext";
 import { routes } from "@/config/route";
 import ConfirmModal from "./ConfirmModal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";

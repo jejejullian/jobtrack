@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle, ShieldCheck, Trash2, UserRound, XCircle } from "lucide-react";
 
-import { useAuth } from "@/context/auth";
+import { useAuth } from "@/context/AuthContext";
 import { changePassword, deleteAccount, updateMe } from "@/services/api";
 
 import { toast } from "@/components/ui/toast";

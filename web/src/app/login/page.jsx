@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 
-import { useAuth } from "@/context/auth";
+import { useAuth } from "@/context/AuthContext";
 import { login as loginApi, getMe, resendVerification } from "@/services/api";
 
 import { toast } from "@/components/ui/toast";

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { routes } from "@/config/route";
+import { routes } from "@/config/routes";
 import InstallGuide from "./InstallGuide";
 import Image from "next/image";
 

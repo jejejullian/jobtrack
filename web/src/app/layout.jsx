@@ -1,6 +1,6 @@
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Providers from "./providers.js";
+import Providers from "./providers";
 
 const inter = Inter({
   variable: "--font-inter",

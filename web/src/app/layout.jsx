@@ -1,4 +1,5 @@
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { SerwistProvider } from "@serwist/turbopack/react";
 import "./globals.css";
 import Providers from "./providers";
 
@@ -22,13 +23,27 @@ export const metadata = {
     ],
     apple: "/apple-touch-icon.png",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Job Tracker",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${jakarta.variable}`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
-        <Providers>{children}</Providers>
+        <SerwistProvider swUrl="/serwist/sw.js">
+          <Providers>{children}</Providers>
+        </SerwistProvider>
       </body>
     </html>
   );

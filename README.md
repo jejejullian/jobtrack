@@ -5,7 +5,9 @@ A full-stack web application for tracking job applications — add, update, filt
 ## Screenshots
 
 ![Dashboard](./screenshots/dashboard.png)
+
 ![Jobs](./screenshots/jobs.png)
+
 ![Login](./screenshots/login.png)
 
 ## Live Demo
@@ -17,37 +19,38 @@ A full-stack web application for tracking job applications — add, update, filt
 ## Features
 
 - **Dashboard** — stats overview (total, applied, interview, offer, rejected), recent applications, and follow-up alerts for stale applications (14+ days without update)
+
 - **Job Management** — add, edit, delete, and update application status (Applied → Interview → Offer → Rejected)
+
 - **Search, Filter & Sort** — search by company, position, or date (supports Indonesian month names); filter by status; sort newest/oldest
-- **Authentication** — register, login, JWT sessions, email verification, forgot/reset password
-- **Profile** — update username, change password, delete account
-- **PWA** — installable on Android, iOS, and desktop (via Chrome/Safari)
+
+- **Authentication** — register (protected by Cloudflare Turnstile), login, httpOnly-cookie JWT sessions, email verification, resend verification, forgot/reset password
+
+- **Profile** — update username, change password, delete account (password-confirmed)
+
 - **Dark Mode** — system-aware with manual toggle
-- **Responsive** — mobile card view + desktop table view
+
+- **Responsive** — mobile sidebar/table view + desktop layout
 
 ---
 
 ## Tech Stack
 
-**Frontend**
-- React 19, React Router v7
-- Tailwind CSS v4, DaisyUI v5
-- Vite 8, vite-plugin-pwa
-- react-hot-toast, lucide-react
+Fullstack **Next.js** — the old separate React (Vite) frontend and Express backend have been merged into a single Next.js app; API routes replace Express entirely.
 
-**Backend**
-- Node.js, Express 5
-- Prisma ORM with `@prisma/adapter-pg`
-- JWT (`jsonwebtoken`), bcryptjs
-- Resend (transactional email)
+- **Framework**: Next.js 16 (App Router), React 19
 
-**Database**
-- PostgreSQL (Neon)
+- **UI**: Tailwind CSS v4, shadcn/ui, next-themes, lucide-react
 
-**Deployment**
-- Frontend: Vercel
-- Backend: Render
-- Domain: Hostinger
+- **API**: Next.js Route Handlers (`src/app/api`), custom `proxy.js` middleware for auth guarding
+
+- **Auth**: JWT (`jsonwebtoken`) in httpOnly cookies, bcryptjs, Cloudflare Turnstile (bot protection)
+
+- **Database**: PostgreSQL (Neon), Prisma ORM 7 with `@prisma/adapter-pg`
+
+- **Email**: Resend (transactional email)
+
+- **Deployment**: Vercel · Domain: Hostinger
 
 ---
 
@@ -58,27 +61,33 @@ jobtrack/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
-├── frontend/
-│   ├── public/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       ├── hooks/
-│       ├── services/      # fetch-based API client
-│       ├── context/       # Auth context
-│       ├── constants/
-│       └── utils/
-├── backend/
-│   ├── prisma/
-│   │   ├── schema.prisma
-│   │   └── migrations/
-│   └── src/
-│       ├── controllers/
-│       ├── routes/
-│       ├── middleware/
-│       ├── lib/           # Prisma client, email
-│       └── utils/
-└── README.md
+├── screenshots/
+└── web/
+    ├── prisma/
+    │   ├── schema.prisma
+    │   └── migrations/
+    ├── public/
+    └── src/
+        ├── app/
+        │   ├── (protected)/       # dashboard, jobs, profile — cookie-guarded layout
+        │   ├── api/
+        │   │   ├── auth/          # register, login, logout, verify-email, resend, forgot/reset password
+        │   │   ├── jobs/
+        │   │   └── users/
+        │   ├── login/
+        │   ├── register/
+        │   ├── forgot-password/
+        │   ├── reset-password/
+        │   └── verify-email/
+        ├── components/
+        ├── config/
+        ├── constants/
+        ├── context/               # AuthContext, AuthProvider
+        ├── hooks/                 # useJobs (search/filter/sort)
+        ├── lib/                   # prisma client, auth helpers, email, AppError
+        ├── services/              # fetch-based API client
+        ├── utils/
+        └── proxy.js                # auth guard for /api/jobs and /api/users
 ```
 
 ---
@@ -90,57 +99,43 @@ jobtrack/
 - Node.js >= 20
 - PostgreSQL database
 - [Resend](https://resend.com) account (for email)
+- [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) site + secret key
 
 ### 1. Clone the repo
 
 ```bash
 git clone https://github.com/jejejullian/jobtrack.git
-cd jobtrack
+cd jobtrack/web
 ```
 
-### 2. Backend setup
+### 2. Install dependencies
 
 ```bash
-cd backend
 npm install
 ```
 
-Create `backend/.env`:
+### 3. Configure environment
+
+Create `web/.env`:
 
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/jobtracker
 JWT_SECRET=your_jwt_secret
 RESEND_API_KEY=re_xxxxxxxxxxxx
 FROM_EMAIL=noreply@yourdomain.com
-FRONTEND_URL=http://localhost:5173
-PORT=3000
+FRONTEND_URL=http://localhost:3000
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_turnstile_site_key
+TURNSTILE_SECRET_KEY=your_turnstile_secret_key
 ```
 
-Run migrations and start:
+### 4. Run migrations and start
 
 ```bash
 npx prisma migrate deploy
 npm run dev
 ```
 
-### 3. Frontend setup
-
-```bash
-cd frontend
-npm install
-```
-
-Create `frontend/.env`:
-
-```env
-VITE_API_URL=http://localhost:3000/api
-```
-
-Start dev server:
-
-```bash
-npm run dev
-```
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
@@ -148,56 +143,54 @@ npm run dev
 
 ### Auth
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login |
-| GET | `/api/auth/verify` | Verify email |
-| POST | `/api/auth/forgot-password` | Request password reset |
-| POST | `/api/auth/reset-password` | Reset password |
-| POST | `/api/auth/resend-verification` | Resend verification email |
+| Method | Endpoint                        | Description                             |
+| ------ | ------------------------------- | --------------------------------------- |
+| POST   | `/api/auth/register`            | Register new user (Turnstile-protected) |
+| POST   | `/api/auth/login`               | Login                                   |
+| POST   | `/api/auth/logout`              | Logout                                  |
+| GET    | `/api/auth/verify-email`        | Verify email                            |
+| POST   | `/api/auth/resend-verification` | Resend verification email               |
+| POST   | `/api/auth/forgot-password`     | Request password reset                  |
+| POST   | `/api/auth/reset-password`      | Reset password                          |
 
-### Jobs *(requires auth)*
+### Jobs _(requires auth)_
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/jobs` | Get all jobs |
-| GET | `/api/jobs/:id` | Get job by ID |
-| POST | `/api/jobs` | Create job |
-| PUT | `/api/jobs/:id` | Update job |
-| DELETE | `/api/jobs/:id` | Delete job |
+| Method | Endpoint        | Description   |
+| ------ | --------------- | ------------- |
+| GET    | `/api/jobs`     | Get all jobs  |
+| POST   | `/api/jobs`     | Create job    |
+| GET    | `/api/jobs/:id` | Get job by ID |
+| PUT    | `/api/jobs/:id` | Update job    |
+| DELETE | `/api/jobs/:id` | Delete job    |
 
-### Users *(requires auth)*
+### Users _(requires auth)_
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/users/me` | Get profile |
-| PATCH | `/api/users/me` | Update username |
-| PATCH | `/api/users/password` | Change password |
-| DELETE | `/api/users/me` | Delete account |
+| Method | Endpoint              | Description                        |
+| ------ | --------------------- | ---------------------------------- |
+| GET    | `/api/users/me`       | Get profile                        |
+| PATCH  | `/api/users/me`       | Update username                    |
+| DELETE | `/api/users/me`       | Delete account (requires password) |
+| PATCH  | `/api/users/password` | Change password                    |
 
 ---
 
 ## Environment Variables
 
-| Variable | Where | Description |
-|----------|-------|-------------|
-| `DATABASE_URL` | Backend | PostgreSQL connection string |
-| `JWT_SECRET` | Backend | Secret key for JWT signing |
-| `RESEND_API_KEY` | Backend | Resend API key |
-| `FROM_EMAIL` | Backend | Sender email address |
-| `FRONTEND_URL` | Backend | Frontend URL (used in email links) |
-| `PORT` | Backend | Server port (default: 3000) |
-| `VITE_API_URL` | Frontend | Backend API base URL |
+| Variable                         | Description                                                |
+| -------------------------------- | ---------------------------------------------------------- |
+| `DATABASE_URL`                   | PostgreSQL connection string                               |
+| `JWT_SECRET`                     | Secret key for JWT signing                                 |
+| `RESEND_API_KEY`                 | Resend API key                                             |
+| `FROM_EMAIL`                     | Sender email address                                       |
+| `FRONTEND_URL`                   | App URL (used in email links)                              |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (client-side)                |
+| `TURNSTILE_SECRET_KEY`           | Cloudflare Turnstile secret key (server-side verification) |
 
 ---
 
 ## CI/CD
 
-GitHub Actions runs on every push and pull request to `main`:
-
-- **Frontend**: install → build
-- **Backend**: install → prisma generate → syntax check
+GitHub Actions runs on every push and pull request to `main`.
 
 ---
 
